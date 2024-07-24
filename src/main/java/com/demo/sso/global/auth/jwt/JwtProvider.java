@@ -30,15 +30,10 @@ public class JwtProvider implements TokenProvider{
         this.secretKey = secretKey;
     }
 
-    public String createRefreshToken(String subject) {
-        return String.format("%s-%s", UUID.randomUUID(), subject);
-    }
-
     /**
      * 토큰 생성 메소드
      *
      * @param subject        : 토큰 생성에 첨가할 User 정보
-     * @param EXPIRE_TIME : 토큰 만료 기간
      * @return : 생성된 Jwt 토큰 문자열
      */
     @Override
