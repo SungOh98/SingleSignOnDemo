@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
 @Slf4j
-public class UserController {
+public class UserController implements UserApi{
     private final UserService userService;
     /**
      * kakao로 로그인 API
