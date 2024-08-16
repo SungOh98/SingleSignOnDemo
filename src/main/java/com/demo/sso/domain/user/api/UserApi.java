@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @Tag(name = "유저관련 API", description = "회원가입, 로그인, 로그아웃, 토큰 리프레시 등등")
 public interface UserApi {
 
-    @Operation(summary = "회원가입 API")
-    @ApiResponses(
-            @ApiResponse(responseCode = "200", description = "회원 가입 성공")
-    )
-    @PostMapping("sign-up")
-    ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest request);
+//    @Operation(summary = "회원가입 API")
+//    @ApiResponses(
+//            @ApiResponse(responseCode = "200", description = "회원 가입 성공")
+//    )
+//    @PostMapping("sign-up")
+//    ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest request);
 
     @Operation(summary = "로그인 API")
     @ApiResponses(

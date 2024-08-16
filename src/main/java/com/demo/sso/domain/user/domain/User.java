@@ -9,9 +9,9 @@ import static jakarta.persistence.GenerationType.*;
 
 @Getter
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public class User extends BaseEntity{
-    @Id @GeneratedValue(strategy = IDENTITY)
+public class User extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_id")
     private Long id;
     private String account;
@@ -20,10 +20,15 @@ public class User extends BaseEntity{
     private String phone;
     private String password;
 
-    private String endpoint;
+    @Column(name = "push_token")
+    private String pushToken;
 
-    @Column(name = "DTYPE")
-    private String dtype;
+    private String userType;
+
+    public void updateName() {
+        if (name == null) name = account;
+        if (nickname == null) nickname = name;
+    }
 
     public static User createUser(SignUpRequest request, BCryptPasswordEncoder passwordEncoder) {
         User user = new User();
@@ -32,6 +37,7 @@ public class User extends BaseEntity{
         user.nickname = request.getNickname();
         user.phone = request.getPhone();
         user.password = passwordEncoder.encode(request.getPassword());
+        user.userType = "user";
         return user;
     }
 

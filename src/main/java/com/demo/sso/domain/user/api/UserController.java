@@ -17,23 +17,19 @@ import java.util.stream.Collectors;
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class UserController implements UserApi{
     private final UserService userService;
-    /**
-     * kakao로 로그인 API
-     * @param params : kakao로 로그인 후 받은 Authentication Code
-     * @return
-     */
-    @RequestMapping("login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
-        return null;
-    }
+//    @RequestMapping("login/kakao")
+//    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
+//        return null;
+//    }
 
-    @PostMapping("sign-up")
-    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest request) {
-        userService.signUp(request);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("sign-up")
+//    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest request) {
+//        userService.signUp(request);
+//        return ResponseEntity.ok().build();
+//    }
 
     @PostMapping("login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
