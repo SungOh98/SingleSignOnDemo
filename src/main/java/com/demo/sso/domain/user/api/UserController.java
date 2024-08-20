@@ -20,16 +20,15 @@ import java.util.stream.Collectors;
 @CrossOrigin("*")
 public class UserController implements UserApi{
     private final UserService userService;
-//    @RequestMapping("login/kakao")
-//    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
-//        return null;
-//    }
 
-//    @PostMapping("sign-up")
-//    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest request) {
-//        userService.signUp(request);
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("login/kakao")
+    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
+        return null;
+    }
+
+
+
+
 
     @PostMapping("login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {

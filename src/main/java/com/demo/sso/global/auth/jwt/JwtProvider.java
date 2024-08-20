@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Jwt 토큰을 생성하고 검증하는 클래스

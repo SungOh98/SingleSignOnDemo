@@ -20,9 +20,6 @@ public class User extends BaseEntity {
     private String phone;
     private String password;
 
-    @Column(name = "push_token")
-    private String pushToken;
-
     private String userType;
 
     public void updateName() {
