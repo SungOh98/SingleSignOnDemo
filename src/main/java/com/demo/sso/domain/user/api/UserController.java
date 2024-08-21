@@ -22,12 +22,10 @@ public class UserController implements UserApi{
     private final UserService userService;
 
     @PostMapping("login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
-        return null;
+    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
+        userService.kakaoLogin(params);
+        return ResponseEntity.ok(new KakaoLoginResponse());
     }
-
-
-
 
 
     @PostMapping("login")

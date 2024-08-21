@@ -12,6 +12,9 @@ import com.demo.sso.domain.user.exception.AccountNotFoundException;
 import com.demo.sso.domain.user.exception.DuplicateAccountException;
 import com.demo.sso.domain.user.service.UserService;
 import com.demo.sso.global.auth.exception.UnAuthenticationException;
+import com.demo.sso.global.infra.kakao.KakaoApiClient;
+import com.demo.sso.global.infra.kakao.KakaoInfoResponse;
+import com.demo.sso.global.infra.kakao.KakaoLoginParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final KakaoApiClient kakaoApiClient;
 
 
     /**
@@ -44,7 +48,7 @@ public class UserServiceImpl implements UserService {
         // 중복 계정있는지 검증.
         validateDuplicate(request.getAccount());
         // 추후 문자 인증 로직 추가해야함.
-        User user = User.createUser(request, passwordEncoder);
+        User user = User.create(request, passwordEncoder);
         userRepository.save(user);
         return user.getId();
     }
@@ -135,6 +139,21 @@ public class UserServiceImpl implements UserService {
     public List<User> users(String accessToken) {
         jwtProvider.validateToken(accessToken);
         return userRepository.findAll();
+    }
+
+    /**
+     * 카카오 로그인
+     * @param params : 카카오서버에서 받은 인증 코드가 담긴 객
+     */
+    @Override
+    public void kakaoLogin(KakaoLoginParams params) {
+        String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
+        KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(kakaoAccessToken);
+        String account = kakaoInfoResponse.getAccount();
+        // 첫 로그인이라면 회원 저장.
+        if (this.userRepository.findAllByAccount(account).size() == 0) {
+
+        }
     }
 
 

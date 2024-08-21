@@ -1,6 +1,7 @@
 package com.demo.sso.domain.user.domain;
 
 import com.demo.sso.domain.user.dto.SignUpRequest;
+import com.demo.sso.global.infra.kakao.KakaoInfoResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,14 +28,23 @@ public class User extends BaseEntity {
         if (nickname == null) nickname = name;
     }
 
-    public static User createUser(SignUpRequest request, BCryptPasswordEncoder passwordEncoder) {
+    public static User createByKakaoInfo(KakaoInfoResponse kakaoInfoResponse) {
+        User user = new User();
+        user.account = kakaoInfoResponse.getAccount();
+        user.name = kakaoInfoResponse.getName();
+        user.nickname = kakaoInfoResponse.getNickName();
+        user.phone = kakaoInfoResponse.getPhoneNumber();
+
+        return user;
+    }
+
+    public static User create(SignUpRequest request, BCryptPasswordEncoder passwordEncoder) {
         User user = new User();
         user.account = request.getAccount();
         user.name = request.getName();
         user.nickname = request.getNickname();
         user.phone = request.getPhone();
         user.password = passwordEncoder.encode(request.getPassword());
-        user.userType = "user";
         return user;
     }
 

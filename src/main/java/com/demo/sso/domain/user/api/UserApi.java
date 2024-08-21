@@ -1,6 +1,7 @@
 package com.demo.sso.domain.user.api;
 
 import com.demo.sso.domain.user.dto.*;
+import com.demo.sso.global.infra.kakao.KakaoLoginParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @Tag(name = "유저관련 API", description = "회원가입, 로그인, 로그아웃, 토큰 리프레시 등등")
 public interface UserApi {
+    @Operation(summary = "카카오 로그인 API")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    )
+    @PostMapping("login/kakao")
+    ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params);
 
     @Operation(summary = "로그인 API")
     @ApiResponses(

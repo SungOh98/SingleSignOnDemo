@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class Client {
-    @GetMapping("/kakao/auth-code")
+    @GetMapping("/kakao")
     public String showAuthCode(@RequestParam String code) {
-        return code;
+        return String.format("Client에서 받은 인증 코드 : %s", code);
     }
 }
