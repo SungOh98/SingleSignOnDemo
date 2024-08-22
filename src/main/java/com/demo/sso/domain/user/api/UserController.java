@@ -23,8 +23,8 @@ public class UserController implements UserApi{
 
     @PostMapping("login/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
-        userService.kakaoLogin(params);
-        return ResponseEntity.ok(new KakaoLoginResponse());
+        KakaoLoginResponse kakaoLoginResponse = userService.kakaoLogin(params);
+        return ResponseEntity.ok(kakaoLoginResponse);
     }
 
 

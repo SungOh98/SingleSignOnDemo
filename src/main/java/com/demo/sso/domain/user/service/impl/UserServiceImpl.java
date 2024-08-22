@@ -1,13 +1,10 @@
 package com.demo.sso.domain.user.service.impl;
 
 import com.demo.sso.domain.user.dao.UserRepository;
+import com.demo.sso.domain.user.dto.*;
 import com.demo.sso.global.auth.jwt.*;
 import com.demo.sso.domain.user.dao.UserTokenRepository;
 import com.demo.sso.domain.user.domain.User;
-import com.demo.sso.domain.user.dto.LoginRequest;
-import com.demo.sso.domain.user.dto.SignUpRequest;
-import com.demo.sso.domain.user.dto.TokenRefreshRequest;
-import com.demo.sso.domain.user.dto.TokenRefreshResponse;
 import com.demo.sso.domain.user.exception.AccountNotFoundException;
 import com.demo.sso.domain.user.exception.DuplicateAccountException;
 import com.demo.sso.domain.user.service.UserService;
@@ -143,17 +140,31 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 카카오 로그인
+     *
      * @param params : 카카오서버에서 받은 인증 코드가 담긴 객
+     * @return
      */
     @Override
-    public void kakaoLogin(KakaoLoginParams params) {
+    public KakaoLoginResponse kakaoLogin(KakaoLoginParams params) {
         String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
         KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(kakaoAccessToken);
         String account = kakaoInfoResponse.getAccount();
-        // 첫 로그인이라면 회원 저장.
-        if (this.userRepository.findAllByAccount(account).size() == 0) {
-
+        UserInfoDto userInfoDto = new UserInfoDto(kakaoInfoResponse);
+        String accessToken = null;
+        String refreshToken = null;
+        // 회원 DB에 있다면 token만 전달
+        try {
+            User user = this.userRepository.findAllByAccount(account).get(0);
+            accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
+            refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
+        }catch (IndexOutOfBoundsException ex) {
+        // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }
+
+        return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
+
+
+
     }
 
 
