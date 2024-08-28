@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     private String userType;
 
     @Enumerated(EnumType.STRING)
-    private Language language = Language.KO;
+    private Language language = Language.ko;
 
     public void updateName() {
         if (name == null) name = account;
