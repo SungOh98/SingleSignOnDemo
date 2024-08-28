@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllException(Exception ex) {
         log.error("예상치 못한 에러 발생!\n {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.from("예상치 못한 에러 발생"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.from("예상치 못한 에러 발생, 세부사항: " + ex.getMessage()));
     }
 
     @ExceptionHandler(UnAuthenticationException.class)

@@ -6,9 +6,11 @@ import java.util.Optional;
 
 public interface UserTokenRepository {
     // Token 저장.
-    UserToken  save(UserToken userToken);
+    UserToken save(UserToken userToken);
+
     // Token 조회.
     Optional<UserToken> findById(Long userId);
+
     // Token 삭제
     void deleteById(Long userId);
 
