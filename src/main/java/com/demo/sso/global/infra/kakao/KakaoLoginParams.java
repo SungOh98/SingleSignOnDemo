@@ -17,4 +17,10 @@ public class KakaoLoginParams {
     )
     @JsonProperty("authorization-code")
     private String authorizationCode;
+    @NotBlank(message = "반드시 로그인 할 어플리케이션을 입력해주세요")
+    @Schema(
+            description = "로그인 할 어플리케이션",
+            example = "dialysis"
+    )
+    private String application;
 }

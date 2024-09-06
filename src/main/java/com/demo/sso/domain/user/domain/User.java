@@ -20,7 +20,7 @@ public class User extends BaseEntity {
     private String nickname;
     private String phone;
     private String password;
-
+    private String application;
     private String userType;
 
     @Enumerated(EnumType.STRING)

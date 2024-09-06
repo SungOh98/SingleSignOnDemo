@@ -31,33 +31,10 @@ public class UserServiceImpl implements UserService {
     private final KakaoApiClient kakaoApiClient;
 
 
-    /**
-     * 회원 가입 프로세스
-     * 1. 계정 중복 검증.
-     * 2. 인증(SMS) -> 일단 생략
-     * 3. User Save
-     *
-     * @param request : 회원 가입 정보
-     * @return : 회원 가입 성공한 User의 ID
-     */
-    @Override
-    public Long signUp(SignUpRequest request) {
-        // 중복 계정있는지 검증.
-        validateDuplicate(request.getAccount());
-        // 추후 문자 인증 로직 추가해야함.
-        User user = User.create(request, passwordEncoder);
-        userRepository.save(user);
-        return user.getId();
-    }
-
     @Transactional(readOnly = true)
-    void validateDuplicate(String account) {
-        if (userRepository.findAllByAccount(account).size() > 0) throw DuplicateAccountException.withDetail(account);
-    }
-
-    @Override
-    public AuthTokens loginByOauth() {
-        return null;
+    void validateDuplicate(String account, String application) {
+        if (!userRepository.findAllByAccount(account, application).isEmpty())
+            throw DuplicateAccountException.withDetail(account);
     }
 
     /**
@@ -74,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public AuthTokens login(LoginRequest request) {
         User findUser;
         try {
-            findUser = userRepository.findAllByAccount(request.getAccount()).get(0);
+            findUser = userRepository.findAllByAccount(request.getAccount(), request.getApplication()).get(0);
         } catch (IndexOutOfBoundsException ex) {
             throw AccountNotFoundException.withDetail(request.getAccount());
         }
@@ -149,20 +126,20 @@ public class UserServiceImpl implements UserService {
         String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
         KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(kakaoAccessToken);
         String account = kakaoInfoResponse.getAccount();
+        String application = params.getApplication();
         UserInfoDto userInfoDto = new UserInfoDto(kakaoInfoResponse);
         String accessToken = null;
         String refreshToken = null;
         // 회원 DB에 있다면 token만 전달
         try {
-            User user = this.userRepository.findAllByAccount(account).get(0);
+            User user = this.userRepository.findAllByAccount(account, application).get(0);
             accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
             refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
-        }catch (IndexOutOfBoundsException ex) {
-        // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
+        } catch (IndexOutOfBoundsException ex) {
+            // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }
 
         return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
-
 
 
     }

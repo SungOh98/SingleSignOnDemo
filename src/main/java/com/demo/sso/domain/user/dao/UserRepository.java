@@ -20,15 +20,16 @@ public class UserRepository {
         return em.find(User.class, id);
     }
 
-    public List<User> findAllByAccount(String account) {
+    public List<User> findAllByAccount(String account, String application) {
         String query = """
                 SELECT u
                 FROM User u
-                WHERE u.account = :account
+                WHERE u.account = :account AND u.application = :application
                 """;
 
         return em.createQuery(query, User.class)
                 .setParameter("account", account)
+                .setParameter("application", application)
                 .getResultList();
     }
 

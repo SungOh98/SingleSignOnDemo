@@ -8,8 +8,6 @@ import com.demo.sso.global.infra.kakao.KakaoLoginParams;
 import java.util.List;
 
 public interface UserService {
-    Long signUp(SignUpRequest request);
-    AuthTokens loginByOauth();
     AuthTokens login(LoginRequest request);
     void logout(String token);
     TokenRefreshResponse refresh(TokenRefreshRequest request);
