@@ -73,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpServletRequest request
     ) {
         log.warn("데이터 찾을 수 없는 예외 발생!!\n {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ErrorResponse.from(
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.from(
                 ex.getMessage()
         ));
     }
