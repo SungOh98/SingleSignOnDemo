@@ -44,7 +44,7 @@ public class UserTokenProvider implements TokenProvider{
         );
         if (!Objects.equals(token, userToken.getRefreshToken())) {
             userTokenRepository.deleteById(userId);
-            throw UnAuthorizationException.withDetail("토큰이 일치하지 않습니다. 재 로그인하세요.");
+            throw UnAuthorizationException.withDetail("재로그인");
         }
 
 
