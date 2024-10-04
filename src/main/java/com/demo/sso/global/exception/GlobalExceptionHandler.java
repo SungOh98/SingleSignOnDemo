@@ -2,6 +2,8 @@ package com.demo.sso.global.exception;
 
 import com.demo.sso.global.auth.exception.UnAuthenticationException;
 import com.demo.sso.global.auth.exception.UnAuthorizationException;
+import com.demo.sso.global.auth.exception.UserTokenExpiredException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +67,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex) {
         log.warn("Jwt 토큰 관련 예외 발생 : {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from("Jwt 토큰 형식이 맞지 않거나 서명형식이 맞지 않습니다."));
+    }
+
+    @ExceptionHandler(UserTokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleUserTokenExpiredException(UserTokenExpiredException ex) {
+        log.warn("refresh token 만료 예외 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.from(ex.getMessage()));
     }
 
     @ExceptionHandler(DataNotFoundException.class)

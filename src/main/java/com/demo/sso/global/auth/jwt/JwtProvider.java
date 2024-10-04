@@ -23,7 +23,7 @@ import java.util.Date;
 @Slf4j
 public class JwtProvider implements TokenProvider{
     private final String secretKey;
-    private final long EXPIRE_TIME = 1000 * 60 * 60 * 24 * 15;
+    private final long EXPIRE_TIME = 1000 * 10;
 
     public JwtProvider(@Value("${jwt.secret-key}") String secretKey) {
         this.secretKey = secretKey;

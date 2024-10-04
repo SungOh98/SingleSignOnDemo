@@ -2,6 +2,7 @@ package com.demo.sso.global.auth.jwt;
 
 import com.demo.sso.domain.user.dao.UserTokenRepository;
 import com.demo.sso.global.auth.exception.UnAuthorizationException;
+import com.demo.sso.global.auth.exception.UserTokenExpiredException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserTokenProvider implements TokenProvider{
 
-    public final long EXPIRE_TIME = 1000 * 120;
+    public final long EXPIRE_TIME = 1000 * 30;
 
     private final UserTokenRepository userTokenRepository;
     @Override
@@ -39,7 +40,7 @@ public class UserTokenProvider implements TokenProvider{
     public void validateToken(String token) {
         Long userId = Long.parseLong(this.getSubject(token));
         UserToken userToken = userTokenRepository.findById(userId).orElseThrow(
-                () -> UnAuthorizationException.withDetail("Refresh Token이 존재하지 않습니다, 재 로그인하세요.")
+                () -> new UserTokenExpiredException("토큰만료")
         );
         if (!Objects.equals(token, userToken.getRefreshToken())) {
             userTokenRepository.deleteById(userId);
