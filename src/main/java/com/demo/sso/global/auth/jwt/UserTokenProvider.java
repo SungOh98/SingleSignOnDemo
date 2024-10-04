@@ -15,8 +15,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserTokenProvider implements TokenProvider{
 
-    public final long EXPIRE_TIME = 1000 * 30;
-
     private final UserTokenRepository userTokenRepository;
     @Override
     public String createToken(String subject) {
@@ -44,6 +42,7 @@ public class UserTokenProvider implements TokenProvider{
         );
         if (!Objects.equals(token, userToken.getRefreshToken())) {
             userTokenRepository.deleteById(userId);
+            log.warn("{}", "<Refresh 지워버림!!!!!!!!>");
             throw UnAuthorizationException.withDetail("재로그인");
         }
 
