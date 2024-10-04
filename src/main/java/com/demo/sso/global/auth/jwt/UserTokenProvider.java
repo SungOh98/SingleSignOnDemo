@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserTokenProvider implements TokenProvider{
 
-    public final long EXPIRE_TIME = 1000 * 30;
+    public final long EXPIRE_TIME = 1000 * 60 * 60;
 
     private final UserTokenRepository userTokenRepository;
     @Override
