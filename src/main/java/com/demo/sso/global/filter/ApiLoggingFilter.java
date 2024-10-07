@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
  */
 @Slf4j
 public class ApiLoggingFilter implements Filter {
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -30,7 +29,6 @@ public class ApiLoggingFilter implements Filter {
 
         String method = httpRequest.getMethod();
         String uri = httpRequest.getRequestURI();
-        String requestTime = LocalDateTime.now().format(formatter);
         String clientIp = getClientIp(httpRequest);
 
         /**
@@ -43,7 +41,7 @@ public class ApiLoggingFilter implements Filter {
 
         int status = httpResponse.getStatus();
 
-        log.info("{} {}, {}, {}, {}", requestTime, clientIp, method, uri, HttpStatus.valueOf(status));
+        log.info("{}, {} {}, {}", clientIp, method, uri, HttpStatus.valueOf(status));
     }
 
     @Override

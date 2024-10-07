@@ -39,3 +39,4 @@ out/
 ### private ###
 
 /src/main/resources/application.yml
+**/app.log
