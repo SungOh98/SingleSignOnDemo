@@ -3,6 +3,8 @@ package com.demo.sso.domain.user.api;
 import com.demo.sso.domain.user.dto.*;
 import com.demo.sso.domain.user.service.UserService;
 import com.demo.sso.global.auth.jwt.AuthTokens;
+import com.demo.sso.global.auth.sms.SmsService;
+import com.demo.sso.global.exception.SuccessResponse;
 import com.demo.sso.global.infra.kakao.KakaoLoginParams;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @CrossOrigin("*")
 public class UserController implements UserApi{
     private final UserService userService;
+    private final SmsService smsService;
 
     @PostMapping("login/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
@@ -35,10 +38,10 @@ public class UserController implements UserApi{
     }
 
     @PostMapping("logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<SuccessResponse> logout(@RequestHeader("Authorization") String accessToken) {
         if (accessToken.startsWith("Bearer ")) accessToken = accessToken.replace("Bearer ", "");
         userService.logout(accessToken);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
     @PostMapping("refresh")
@@ -63,6 +66,18 @@ public class UserController implements UserApi{
         return ResponseEntity.ok(new UsersResponse(collect));
     }
 
+
+    @PostMapping("sms")
+    public ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception {
+
+        return ResponseEntity.ok(SuccessResponse.from("success"));
+    }
+
+    @PostMapping("sms/verification")
+    public ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request) {
+
+        return ResponseEntity.ok(SuccessResponse.from("success"));
+    }
 
 
 
