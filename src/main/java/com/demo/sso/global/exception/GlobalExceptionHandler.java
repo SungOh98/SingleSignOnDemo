@@ -1,8 +1,6 @@
 package com.demo.sso.global.exception;
 
-import com.demo.sso.global.auth.exception.UnAuthenticationException;
-import com.demo.sso.global.auth.exception.UnAuthorizationException;
-import com.demo.sso.global.auth.exception.UserTokenExpiredException;
+import com.demo.sso.global.auth.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +41,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.joining("\n"));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(errorMessages));
     }
+
+    @ExceptionHandler(ExpiredCodeException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredCodeException(ExpiredCodeException ex) {
+        log.warn("SMS 인증 코드 만료 예외 발생 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.GONE).body(ErrorResponse.from(ex.getMessage()));
+    }
+
+    @ExceptionHandler(TooManyRequestException.class)
+    public ResponseEntity<ErrorResponse> handleTooManyRequestException(TooManyRequestException ex) {
+        log.warn("SMS 인증 과다 요청 예외 발생 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ErrorResponse.from(ex.getMessage()));
+    }
+
+    @ExceptionHandler(UnValidCodeException.class)
+    public ResponseEntity<ErrorResponse> handleUnValidCodeException(UnValidCodeException ex) {
+        log.warn("SMS 인증 실패(잘못 입력) 예외 발생 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(ex.getMessage()));
+    }
+
 
     // 예상치 못한 에러 발생 처리
     @ExceptionHandler(Exception.class)

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin("*")
-public class UserController implements UserApi{
+public class UserController implements UserApi {
     private final UserService userService;
     private final SmsService smsService;
 
@@ -47,7 +47,7 @@ public class UserController implements UserApi{
     @PostMapping("refresh")
     public ResponseEntity<TokenRefreshResponse> refresh(
             @RequestBody @Valid TokenRefreshRequest request
-            ) {
+    ) {
         TokenRefreshResponse newTokens = userService.refresh(request);
         return ResponseEntity.ok(newTokens);
     }
@@ -69,17 +69,15 @@ public class UserController implements UserApi{
 
     @PostMapping("sms")
     public ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception {
-
+        this.smsService.sendVerifyCode(request.getPhone());
         return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
     @PostMapping("sms/verification")
     public ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request) {
-
+        this.smsService.verifyCode(request.getPhone(), request.getCode());
         return ResponseEntity.ok(SuccessResponse.from("success"));
     }
-
-
 
 
 }

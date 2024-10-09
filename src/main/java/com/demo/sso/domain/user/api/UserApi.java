@@ -55,8 +55,18 @@ public interface UserApi {
     );
 
     @Operation(summary = "문자 전송 요청 API")
-    @ApiResponses(
-            @ApiResponse(responseCode = "200", description = "문자 전송 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문자 전송 성공"),
+            // 실패시
+            @ApiResponse(responseCode = "429", description = "너무 많은 문자 요청을 할 경우 발생하는 에러"
+                    , content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            // 실패시
+            @ApiResponse(responseCode = "500", description = "서버 에러"
+                    , content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+    }
+            // 429
     )
     @PostMapping("sms")
     ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception;
@@ -66,8 +76,14 @@ public interface UserApi {
             // 성공시
             @ApiResponse(responseCode = "200", description = "문자 인증 성공"),
             // 실패시
-            @ApiResponse(responseCode = "401", description = "문자 인증 실패"
-                    , content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "문자 인증 실패"
+                    , content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "410", description = "문자 인증 시간 만료", content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "서버 에러"
+                    , content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
     })
     @PostMapping("sms/verification")
     ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request);
