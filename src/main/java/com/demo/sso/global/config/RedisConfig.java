@@ -23,14 +23,15 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
+    // String : Java 객체 형태로 저장하기 위한 템플릿. -> Refresh Token, 문자 인증에서 사용
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
 
-        // 일반적인 key:value의 경우 시리얼라이저 (String : Java 객체)
+        // Key는 String으로 설정
         template.setKeySerializer(new StringRedisSerializer());
-        // Value는 Json 형태로 저장.
+        // Value는 Java 객체를 Json으로 직렬화하여 저장.
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
         // Hash를 사용할 경우 시리얼라이저 (String : Set<Java 객체>)

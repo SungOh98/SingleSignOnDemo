@@ -18,6 +18,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.stream.Collectors;
 
+import static com.demo.sso.global.exception.CustomResponseCode.*;
+
 
 /**
  * 모든 컨트롤러의 예외처리를 담당하는 클래스.
@@ -45,19 +47,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ExpiredCodeException.class)
     public ResponseEntity<ErrorResponse> handleExpiredCodeException(ExpiredCodeException ex) {
         log.warn("SMS 인증 코드 만료 예외 발생 : {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.GONE).body(ErrorResponse.from(ex.getMessage()));
-    }
-
-    @ExceptionHandler(TooManyRequestException.class)
-    public ResponseEntity<ErrorResponse> handleTooManyRequestException(TooManyRequestException ex) {
-        log.warn("SMS 인증 과다 요청 예외 발생 : {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ErrorResponse.from(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.GONE).body(ErrorResponse.of(ex.getMessage(), SMS_MESSAGE_TIMEOUT));
     }
 
     @ExceptionHandler(UnValidCodeException.class)
     public ResponseEntity<ErrorResponse> handleUnValidCodeException(UnValidCodeException ex) {
         log.warn("SMS 인증 실패(잘못 입력) 예외 발생 : {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of(ex.getMessage(), WRONG_SMS_MESSAGE));
+    }
+
+    @ExceptionHandler(TooManyRequestException.class)
+    public ResponseEntity<ErrorResponse> handleTooManyRequestException(TooManyRequestException ex) {
+        log.warn("SMS 인증 과다 요청 예외 발생 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ErrorResponse.of(ex.getMessage(), TOO_MANY_SMS_REQUEST));
     }
 
 
