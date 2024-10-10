@@ -69,13 +69,13 @@ public class UserController implements UserApi {
 
     @PostMapping("sms")
     public ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception {
-        this.smsService.sendVerifyCode(request.getPhone(), request.getApplication());
+//        this.smsService.sendVerifyCode(request.getPhone(), request.getApplication());
         return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
     @PostMapping("sms/verification")
     public ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request) {
-        this.smsService.verifyCode(request.getPhone(), request.getCode());
+//        this.smsService.verifyCode(request.getPhone(), request.getCode());
         return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
