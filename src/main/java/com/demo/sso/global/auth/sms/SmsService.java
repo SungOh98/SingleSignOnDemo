@@ -19,7 +19,7 @@ public class SmsService {
 
 
     // 인증번호 전송
-    public void sendVerifyCode(String phone) throws Exception {
+    public void sendVerifyCode(String phone, String application) throws Exception {
         // 전송 횟수가 최대 전송 가능 횟수에 도달했을 때는 예외 터트림
         if (!isLessThanMaxSend(phone)) {
             // 인증 코드 삭제
@@ -30,7 +30,7 @@ public class SmsService {
         // 전송 코드 생성
         String verifyCode = generateVerifyCode();
         // 문자 메시지 전송
-        naverApiClient.requestSMS(phone.replace("-", ""), String.format("[HeartOn] 인증번호는 %s 입니다", verifyCode));
+        naverApiClient.requestSMS(phone.replace("-", ""), String.format("[%s] 인증번호는 %s 입니다", application, verifyCode));
         // 전송 횟수 추가
         incrementCount(phone);
         // 전송 코드 저장

@@ -69,7 +69,7 @@ public class UserController implements UserApi {
 
     @PostMapping("sms")
     public ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception {
-        this.smsService.sendVerifyCode(request.getPhone());
+        this.smsService.sendVerifyCode(request.getPhone(), request.getApplication());
         return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 

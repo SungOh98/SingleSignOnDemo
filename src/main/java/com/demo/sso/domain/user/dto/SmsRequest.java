@@ -18,4 +18,12 @@ public class SmsRequest {
             nullable = false,
             example = "010-1234-5678")
     private String phone;
+
+
+    @NotBlank(message = "어플리케이션 명을 넘겨주세요.")
+    @Schema(
+            description = "문자메시지에 표시될 어플리케이션 명",
+            nullable = false,
+            example = "HeartOn")
+    private String application;
 }
