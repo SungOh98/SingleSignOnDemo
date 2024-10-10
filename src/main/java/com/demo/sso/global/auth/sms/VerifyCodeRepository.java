@@ -1,39 +1,41 @@
 package com.demo.sso.global.auth.sms;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import com.demo.sso.global.auth.exception.ExpiredCodeException;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.Duration;
+import java.util.Optional;
 
-/**
- * 사용제한
- * 1. 같은 핸드폰으로 여러번 요청하지 못하게 -> 내가 처리
- * 2. 같은 기기에서 번호를 바꿔가며 여러번 요청하지 못하게 -> Client에서 처리
- *
- */
+
 @Repository
-@RequiredArgsConstructor
-public class VerifyCodeRepository{
-    private final String PREFIX = "sms:";
-    private final int LIVE_SEC = 60 * 3; // 3분
-    private final StringRedisTemplate redisTemplate;
+public interface VerifyCodeRepository extends CrudRepository<VerifyCode, String> {
+    /* 기본 제공 메소드들 */
+    @Override
+    VerifyCode save(VerifyCode verifyCode);
 
+    @Override
+    Optional<VerifyCode> findById(String id);
 
-    public void save(String phone, String code) {
-        redisTemplate.opsForValue().set(
-                PREFIX + phone,
-                code,
-                Duration.ofSeconds(LIVE_SEC)
-        );
+    @Override
+    void deleteById(String id);
+
+    @Override
+    boolean existsById(String phone);
+
+    /* 새롭게 정의한 메소드들 */
+    default VerifyCode findByPhone(String phone) {
+        return findById(phone)
+                .orElseThrow(() -> ExpiredCodeException.withDetail(phone));
     }
 
-    public String findByPhone(String phone) {
-        return redisTemplate.opsForValue().get(PREFIX + phone);
+    default void deleteByPhone(String phone) {
+        deleteById(phone);
+    }
+
+    default boolean isExist(String phone) {
+        return existsById(phone);
     }
 
 
-    public void delete(String phone) {
-        redisTemplate.delete(PREFIX + phone);
-    }
+
 }
