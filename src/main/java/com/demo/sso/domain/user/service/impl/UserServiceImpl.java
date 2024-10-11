@@ -135,6 +135,8 @@ public class UserServiceImpl implements UserService {
             User user = this.userRepository.findAllByAccount(account, application).get(0);
             accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
             refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
+            // refresh Token 토큰 저장.
+            userTokenRepository.save(UserToken.create(user.getId(), refreshToken));
         } catch (IndexOutOfBoundsException ex) {
             // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }

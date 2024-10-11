@@ -1,7 +1,7 @@
 package com.demo.sso.global.exception;
 
-import com.demo.sso.global.auth.exception.UnAuthenticationException;
-import com.demo.sso.global.auth.exception.UnAuthorizationException;
+import com.demo.sso.global.auth.exception.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.stream.Collectors;
+
+import static com.demo.sso.global.exception.CustomResponseCode.*;
 
 
 /**
@@ -42,6 +44,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(errorMessages));
     }
 
+    @ExceptionHandler(ExpiredCodeException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredCodeException(ExpiredCodeException ex) {
+        log.warn("SMS 인증 코드 만료 예외 발생 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.GONE).body(ErrorResponse.of(ex.getMessage(), SMS_MESSAGE_TIMEOUT));
+    }
+
+    @ExceptionHandler(UnValidCodeException.class)
+    public ResponseEntity<ErrorResponse> handleUnValidCodeException(UnValidCodeException ex) {
+        log.warn("SMS 인증 실패(잘못 입력) 예외 발생 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of(ex.getMessage(), WRONG_SMS_MESSAGE));
+    }
+
+    @ExceptionHandler(TooManyRequestException.class)
+    public ResponseEntity<ErrorResponse> handleTooManyRequestException(TooManyRequestException ex) {
+        log.warn("SMS 인증 과다 요청 예외 발생 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ErrorResponse.of(ex.getMessage(), TOO_MANY_SMS_REQUEST));
+    }
+
+
     // 예상치 못한 에러 발생 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllException(Exception ex) {
@@ -65,6 +86,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex) {
         log.warn("Jwt 토큰 관련 예외 발생 : {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from("Jwt 토큰 형식이 맞지 않거나 서명형식이 맞지 않습니다."));
+    }
+
+    @ExceptionHandler(UserTokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleUserTokenExpiredException(UserTokenExpiredException ex) {
+        log.warn("refresh token 만료 예외 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.from(ex.getMessage()));
     }
 
     @ExceptionHandler(DataNotFoundException.class)

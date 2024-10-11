@@ -3,6 +3,8 @@ package com.demo.sso.domain.user.api;
 import com.demo.sso.domain.user.dto.*;
 import com.demo.sso.domain.user.service.UserService;
 import com.demo.sso.global.auth.jwt.AuthTokens;
+import com.demo.sso.global.auth.sms.SmsService;
+import com.demo.sso.global.exception.SuccessResponse;
 import com.demo.sso.global.infra.kakao.KakaoLoginParams;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin("*")
-public class UserController implements UserApi{
+public class UserController implements UserApi {
     private final UserService userService;
+    private final SmsService smsService;
 
     @PostMapping("login/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
@@ -35,16 +38,16 @@ public class UserController implements UserApi{
     }
 
     @PostMapping("logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<SuccessResponse> logout(@RequestHeader("Authorization") String accessToken) {
         if (accessToken.startsWith("Bearer ")) accessToken = accessToken.replace("Bearer ", "");
         userService.logout(accessToken);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
     @PostMapping("refresh")
     public ResponseEntity<TokenRefreshResponse> refresh(
             @RequestBody @Valid TokenRefreshRequest request
-            ) {
+    ) {
         TokenRefreshResponse newTokens = userService.refresh(request);
         return ResponseEntity.ok(newTokens);
     }
@@ -64,7 +67,17 @@ public class UserController implements UserApi{
     }
 
 
+    @PostMapping("sms")
+    public ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception {
+        this.smsService.sendVerifyCode(request.getPhone(), request.getApplication());
+        return ResponseEntity.ok(SuccessResponse.from("success"));
+    }
 
+    @PostMapping("sms/verification")
+    public ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request) {
+        this.smsService.verifyCode(request.getPhone(), request.getCode());
+        return ResponseEntity.ok(SuccessResponse.from("success"));
+    }
 
 
 }
