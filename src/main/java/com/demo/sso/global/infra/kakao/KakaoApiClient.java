@@ -41,7 +41,7 @@ public class KakaoApiClient {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
+        body.add("redirect_uri", redirectUri.replace("application", params.getApplication()));
         body.add("code", params.getAuthorizationCode());
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
