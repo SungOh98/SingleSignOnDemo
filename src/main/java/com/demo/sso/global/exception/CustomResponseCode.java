@@ -9,7 +9,8 @@ public enum CustomResponseCode {
     WRONG_SMS_MESSAGE(0),
     SMS_MESSAGE_TIMEOUT(1),
     INTERNAL_SERVER_ERROR(500),
-    TOO_MANY_SMS_REQUEST(2);
+    TOO_MANY_SMS_REQUEST(2),
+    DUPLICATE_SMS_REQUEST(3);
 
     // 정수를 반환
     private final int code;
