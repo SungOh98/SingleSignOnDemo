@@ -85,14 +85,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex) {
         log.warn("Jwt 토큰 관련 예외 발생 : {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from("Jwt 토큰 형식이 맞지 않거나 서명형식이 맞지 않습니다."));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of("Jwt 토큰 형식이 맞지 않거나 서명형식이 맞지 않습니다.", INVALID_JWT_TOKEN_TYPE));
     }
 
     @ExceptionHandler(UserTokenExpiredException.class)
     public ResponseEntity<ErrorResponse> handleUserTokenExpiredException(UserTokenExpiredException ex) {
         log.warn("refresh token 만료 예외 : {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.from(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ErrorResponse.of(ex.getMessage(), REFRESH_TOKEN_TIMEOUT)
+                );
     }
+
 
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(
