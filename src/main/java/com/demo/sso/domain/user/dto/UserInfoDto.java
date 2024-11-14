@@ -38,7 +38,7 @@ public class UserInfoDto {
         return gen;
     }
 
-    @Null
+    @NotBlank(message = "카카오 계정은 반드시 얻음.")
     @Schema(
             description = "카카오 계정",
             example = "gildong123"

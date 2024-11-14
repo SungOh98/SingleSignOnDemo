@@ -1,4 +1,4 @@
-package com.demo.sso.domain.user.domain;
+package com.demo.sso.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

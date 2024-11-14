@@ -1,5 +1,6 @@
 package com.demo.sso.domain.user.domain;
 
+import com.demo.sso.domain.BaseEntity;
 import com.demo.sso.domain.user.dto.SignUpRequest;
 import com.demo.sso.global.infra.kakao.KakaoInfoResponse;
 import jakarta.persistence.*;
