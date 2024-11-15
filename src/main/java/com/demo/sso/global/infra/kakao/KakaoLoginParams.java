@@ -23,4 +23,12 @@ public class KakaoLoginParams {
             example = "dialysis"
     )
     private String application;
+
+    @JsonProperty("redirect-uri")
+    @NotBlank(message = "리다이렉트 URI를 넘겨주세요")
+    @Schema(
+            description = "카카오 로그인 Redirect URI",
+            example = "https://dialysis.livincare.kr/kakao"
+    )
+    private String redirectUri;
 }
