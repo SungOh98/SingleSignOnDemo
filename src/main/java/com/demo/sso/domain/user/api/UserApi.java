@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +20,21 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @Tag(name = "유저관련 API", description = "회원가입, 로그인, 로그아웃, 토큰 리프레시 등등")
 public interface UserApi {
+
+    @Operation(summary = "통합 회원가입 API")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "회원가입 성공")
+    )
+    @PostMapping("signup")
+    ResponseEntity<TotalSignUpResponse> signup(@RequestBody @Valid SignUpRequest request);
+
+
     @Operation(summary = "카카오 로그인 API")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "로그인 성공")
     )
     @PostMapping("login/kakao")
-    ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params);
+    ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody @Valid KakaoLoginParams params);
 
     @Operation(summary = "로그인 API")
     @ApiResponses(
@@ -33,17 +44,22 @@ public interface UserApi {
     ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request);
 
 
-    @Operation(summary = "로그아웃 API")
-    @ApiResponses(
-            @ApiResponse(responseCode = "200", description = "로그아웃 성공")
-    )
-    @PostMapping("logout")
-    ResponseEntity<SuccessResponse> logout(
-            @RequestHeader("Authorization")
-            @Schema(
-                    example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-            )
-            String accessToken);
+
+//    @Operation(summary = "로그아웃 API")
+//    @ApiResponses(
+//            @ApiResponse(responseCode = "200", description = "로그아웃 성공")
+//    )
+//    @PostMapping("logout")
+//    @SecurityRequirement(name = "Jwt Authentication")
+//    ResponseEntity<SuccessResponse> logout(
+//            @RequestHeader("Authorization")
+//            @Schema(
+//                    example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+//            )
+//            String accessToken);
+
+
+
 
     @Operation(summary = "AccessToken 재발급 API")
     @ApiResponses(
@@ -53,6 +69,8 @@ public interface UserApi {
     ResponseEntity<TokenRefreshResponse> refresh(
             @RequestBody @Valid TokenRefreshRequest request
     );
+
+
 
     @Operation(summary = "문자 전송 요청 API")
     @ApiResponses(value = {

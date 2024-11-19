@@ -1,5 +1,6 @@
 package com.demo.sso.domain.user.dto;
 
+import com.demo.sso.domain.user.domain.Language;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -8,23 +9,11 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SignUpRequest {
-    @NotBlank(message = "이름을 반드시 입력해주세요")
+    @NotBlank(message = "회원 가입 ID를 반드시 입력해주세요")
     @Schema(
-            description = "이름",
-            example = "홍길동")
-    private String name;
-
-    @NotBlank(message = "로그인 할 ID를 반드시 입력해주세요")
-    @Schema(
-            description = "로그인 ID",
+            description = "회원 ID",
             example = "gildong123")
     private String account;
-
-    @NotBlank(message = "별명을 반드시 입력해주세요")
-    @Schema(
-            description = "별명",
-            example = "GilBro")
-    private String nickname;
 
     @NotBlank(message = "비밀번호를 반드시 입력해주세요")
     @Schema(
@@ -32,9 +21,45 @@ public class SignUpRequest {
             example = "1234")
     private String password;
 
+    @Schema(
+            nullable = true,
+            description = "이름",
+            example = "홍길동")
+    private String name;
+
+    @Schema(
+            nullable = true,
+            description = "별명",
+            example = "GilBro")
+    private String nickname;
+
     @NotBlank(message = "전화번호를 반드시 입력해주세요")
     @Schema(
             description = "전화번호",
             example = "010-1234-5678")
     private String phone;
+
+    @NotBlank(message = "회원 종류를 반드시 입력해주세요")
+    @Schema(
+            description = "회원 종류 (doctor, patient, ...)",
+            example = "doctor"
+    )
+    private String userType;
+
+    @NotBlank(message = "회원의 소속 어플리케이션을 반드시 입력해주세요")
+    @Schema(
+            description = "어플리케이션명 (dialysis, ...)",
+            example = "dialysis"
+    )
+    private String application;
+
+    @Schema(
+            nullable = true,
+            defaultValue = "ko",
+            description = "지원 언어",
+            example = "ko"
+    )
+    private Language language;
+
+
 }

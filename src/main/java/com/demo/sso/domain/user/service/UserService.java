@@ -16,4 +16,6 @@ public interface UserService {
 
     KakaoLoginResponse kakaoLogin(KakaoLoginParams params);
 
+    Long totalSignUp(SignUpRequest request);
 }
+

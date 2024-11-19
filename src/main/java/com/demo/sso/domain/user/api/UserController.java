@@ -24,8 +24,14 @@ public class UserController implements UserApi {
     private final UserService userService;
     private final SmsService smsService;
 
+    @PostMapping("signup")
+    public ResponseEntity<TotalSignUpResponse> signup(@RequestBody @Valid SignUpRequest request) {
+        Long userId = userService.totalSignUp(request);
+        return ResponseEntity.ok(new TotalSignUpResponse(userId));
+    }
+
     @PostMapping("login/kakao")
-    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginParams params) {
+    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody @Valid KakaoLoginParams params) {
         KakaoLoginResponse kakaoLoginResponse = userService.kakaoLogin(params);
         return ResponseEntity.ok(kakaoLoginResponse);
     }
@@ -37,12 +43,12 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(new LoginResponse(tokens));
     }
 
-    @PostMapping("logout")
-    public ResponseEntity<SuccessResponse> logout(@RequestHeader("Authorization") String accessToken) {
-        if (accessToken.startsWith("Bearer ")) accessToken = accessToken.replace("Bearer ", "");
-        userService.logout(accessToken);
-        return ResponseEntity.ok(SuccessResponse.from("success"));
-    }
+//    @PostMapping("logout")
+//    public ResponseEntity<SuccessResponse> logout(@RequestHeader("Authorization") String accessToken) {
+//        if (accessToken.startsWith("Bearer ")) accessToken = accessToken.replace("Bearer ", "");
+//        userService.logout(accessToken);
+//        return ResponseEntity.ok(SuccessResponse.from("success"));
+//    }
 
     @PostMapping("refresh")
     public ResponseEntity<TokenRefreshResponse> refresh(
