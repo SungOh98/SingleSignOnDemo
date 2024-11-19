@@ -2,6 +2,7 @@ package com.demo.sso.domain.user.service.impl;
 
 import com.demo.sso.domain.user.dao.UserRepository;
 import com.demo.sso.domain.user.dto.*;
+import com.demo.sso.domain.user.exception.DuplicatePhoneException;
 import com.demo.sso.global.auth.jwt.*;
 import com.demo.sso.domain.user.dao.UserTokenRepository;
 import com.demo.sso.domain.user.domain.User;
@@ -30,11 +31,22 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final KakaoApiClient kakaoApiClient;
 
+    @Override
+    public Long totalSignUp(SignUpRequest request) {
+        // 계정, 폰 중복 검사
+        validateDuplicate(request.getAccount(), request.getPhone(), request.getApplication());
+        User user = User.create(request, passwordEncoder);
+        userRepository.save(user);
+        return user.getId();
+    }
+
 
     @Transactional(readOnly = true)
-    void validateDuplicate(String account, String application) {
+    void validateDuplicate(String account, String phone, String application) {
         if (!userRepository.findAllByAccount(account, application).isEmpty())
             throw DuplicateAccountException.withDetail(account);
+        if (!userRepository.findAllByPhone(phone, application).isEmpty())
+            throw DuplicatePhoneException.withDetail(phone);
     }
 
     /**

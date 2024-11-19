@@ -39,4 +39,5 @@ out/
 ### private ###
 
 /src/main/resources/application.yml
+/src/test/resources/application.yml
 **/app.log

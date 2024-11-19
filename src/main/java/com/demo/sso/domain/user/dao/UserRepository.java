@@ -33,6 +33,19 @@ public class UserRepository {
                 .getResultList();
     }
 
+    public List<User> findAllByPhone(String phone, String application) {
+        String query = """
+                SELECT u
+                FROM User u
+                WHERE u.phone = :phone AND u.application = :application
+                """;
+
+        return em.createQuery(query, User.class)
+                .setParameter("phone", phone)
+                .setParameter("application", application)
+                .getResultList();
+    }
+
 
     public List<User> findAll() {
         return em.createQuery("SELECT u FROM User u", User.class).getResultList();
