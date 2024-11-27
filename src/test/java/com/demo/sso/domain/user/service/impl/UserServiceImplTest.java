@@ -13,10 +13,13 @@ import com.demo.sso.global.auth.exception.UnAuthenticationException;
 import com.demo.sso.global.auth.jwt.AuthTokens;
 import com.demo.sso.global.auth.jwt.JwtProvider;
 import com.demo.sso.global.auth.jwt.UserTokenProvider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,18 +43,25 @@ class UserServiceImplTest {
     @Autowired
     private UserTokenProvider userTokenProvider;
 
+    @PersistenceContext
+    EntityManager entityManager;
+
     @Test
+    @Rollback(false)
     public void 유저_회원가입() throws Exception {
         //given
         SignUpRequest request = new SignUpRequest(
                 "patientA",
                 "patientA",
                 null, null, "010-1234-5678",
-                "doctor", "app1", null
+                "doctor", "app1",
+                null, null, null, null
         );
 
         //when
         Long userId = userService.totalSignUp(request);
+        entityManager.flush();
+        entityManager.clear();
         User user = userRepository.findOne(userId);
 
         //then
@@ -72,8 +82,10 @@ class UserServiceImplTest {
         SignUpRequest request1 = new SignUpRequest(
                 "patientA",
                 "patientA",
-                null, null, "010-1234-5678",
-                "doctor", "app1", null
+                "010-1234-5678",
+                "doctor", "app1",
+                null, null, null,
+                null, null, null
         );
 
         Long userId = userService.totalSignUp(request1);
@@ -81,14 +93,18 @@ class UserServiceImplTest {
         SignUpRequest request2 = new SignUpRequest(
                 "patientA",
                 "patientA",
-                null, null, "0",
-                "doctor", "app1", null
+                "0",
+                "doctor", "app1",
+                null, null, null,
+                null, null, null
         );
         SignUpRequest request3 = new SignUpRequest(
                 "patientB",
                 "patientA",
-                null, null, "010-1234-5678",
-                "doctor", "app1", null
+                "010-1234-5678",
+                "doctor", "app1",
+                null, null, null,
+                null, null, null
         );
 
         //when & then

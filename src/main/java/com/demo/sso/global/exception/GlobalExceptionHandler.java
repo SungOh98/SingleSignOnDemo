@@ -1,7 +1,6 @@
 package com.demo.sso.global.exception;
 
 import com.demo.sso.global.auth.exception.*;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +95,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         ErrorResponse.of(ex.getMessage(), REFRESH_TOKEN_TIMEOUT)
                 );
     }
-
 
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(
