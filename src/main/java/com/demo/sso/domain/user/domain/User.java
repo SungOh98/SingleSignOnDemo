@@ -3,7 +3,8 @@ package com.demo.sso.domain.user.domain;
 import com.demo.sso.domain.BaseEntity;
 import com.demo.sso.domain.hospital.domain.Hospital;
 import com.demo.sso.domain.user.dto.SignUpRequest;
-import com.demo.sso.global.infra.kakao.KakaoInfoResponse;
+import com.demo.sso.global.util.encrytion.CryptoConverter;
+import com.demo.sso.global.util.encrytion.OnlyEncryptionConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,14 +18,29 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
+    /*==필수 속성들(암/복호화 모두 수행)==*/
+    @Convert(converter = CryptoConverter.class)
     private String account;
     private String password;
-    private String name;
-    private String nickname;
+    @Convert(converter = CryptoConverter.class)
     private String phone;
     private String userType;
     private String application;
 
+
+    /*==Optional 속성들(복호화는 안함.)==*/
+    @Convert(converter = OnlyEncryptionConverter.class)
+    private String name;
+    @Convert(converter = OnlyEncryptionConverter.class)
+    private String nickname;
+    @Convert(converter = OnlyEncryptionConverter.class)
+    private String gender;
+    @Convert(converter = OnlyEncryptionConverter.class)
+    @Column(name = "birthyear")
+    private String birthYear;
+    @Convert(converter = OnlyEncryptionConverter.class)
+    private String height;
     @Enumerated(EnumType.STRING)
     private Language language = Language.ko;
     private Boolean isActive;
@@ -46,6 +62,9 @@ public class User extends BaseEntity {
         user.setLanguage(request.getLanguage());
         user.isActive = true;
         user.alarmAvailable = true;
+        user.birthYear = String.valueOf(request.getBirthYear());
+        user.height = String.valueOf(request.getHeight());
+        user.gender = String.valueOf(request.getGender());
         user.updateName();
         return user;
     }
@@ -58,16 +77,6 @@ public class User extends BaseEntity {
     public void updateName() {
         if (name == null) name = account;
         if (nickname == null) nickname = name;
-    }
-
-    public static User createByKakaoInfo(KakaoInfoResponse kakaoInfoResponse) {
-        User user = new User();
-        user.account = kakaoInfoResponse.getAccount();
-        user.name = kakaoInfoResponse.getName();
-        user.nickname = kakaoInfoResponse.getNickName();
-        user.phone = kakaoInfoResponse.getPhoneNumber();
-
-        return user;
     }
 
     public boolean isSamePassword(String inputPassword, BCryptPasswordEncoder passwordEncoder) {

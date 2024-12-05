@@ -20,28 +20,40 @@ public class UserRepository {
         return em.find(User.class, id);
     }
 
-    public List<User> findAllByAccount(String account, String application) {
+//    public List<User> findAllByAccount(String account, String application) {
+//        String query = """
+//                SELECT u
+//                FROM User u
+//                WHERE u.account = :account AND u.application = :application
+//                """;
+//
+//        return em.createQuery(query, User.class)
+//                .setParameter("account", account)
+//                .setParameter("application", application)
+//                .getResultList();
+//    }
+//
+//    public List<User> findAllByPhone(String phone, String application) {
+//        String query = """
+//                SELECT u
+//                FROM User u
+//                WHERE u.phone = :phone AND u.application = :application
+//                """;
+//
+//        return em.createQuery(query, User.class)
+//                .setParameter("phone", phone)
+//                .setParameter("application", application)
+//                .getResultList();
+//    }
+
+    public List<User> findAllByApplication(String application) {
         String query = """
                 SELECT u
                 FROM User u
-                WHERE u.account = :account AND u.application = :application
+                WHERE u.application = :application
                 """;
 
         return em.createQuery(query, User.class)
-                .setParameter("account", account)
-                .setParameter("application", application)
-                .getResultList();
-    }
-
-    public List<User> findAllByPhone(String phone, String application) {
-        String query = """
-                SELECT u
-                FROM User u
-                WHERE u.phone = :phone AND u.application = :application
-                """;
-
-        return em.createQuery(query, User.class)
-                .setParameter("phone", phone)
                 .setParameter("application", application)
                 .getResultList();
     }

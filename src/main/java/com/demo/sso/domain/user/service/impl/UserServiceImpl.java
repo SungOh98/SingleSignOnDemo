@@ -43,10 +43,36 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     void validateDuplicate(String account, String phone, String application) {
-        if (!userRepository.findAllByAccount(account, application).isEmpty())
-            throw DuplicateAccountException.withDetail(account);
-        if (!userRepository.findAllByPhone(phone, application).isEmpty())
-            throw DuplicatePhoneException.withDetail(phone);
+        /**
+         ** 암호화 전 로직 **
+         if (!userRepository.findAllByAccount(account, application).isEmpty())
+         throw DuplicateAccountException.withDetail(account);
+         if (!userRepository.findAllByPhone(phone, application).isEmpty())
+         throw DuplicatePhoneException.withDetail(phone);
+         *
+         */
+        List<User> appUsers = userRepository.findAllByApplication(application);
+        for (User user : appUsers) {
+            if (user.getAccount().equals(account)) throw DuplicateAccountException.withDetail(account);
+            if (user.getPhone().equals(phone)) throw DuplicatePhoneException.withDetail(phone);
+        }
+
+    }
+
+    /**
+     * 계정으로 User 찾기 메소드
+     * DB 암호화로 인해 JPQL로 찾을 수 없음(SELECT 절에 WHERE 절 사용 불가!)
+     *
+     * @param account : 찾을 계정
+     * @return user :  Entity
+     */
+    @Transactional(readOnly = true)
+    User findByAccount(String account, String application) {
+        List<User> appUsers = userRepository.findAllByApplication(application);
+        return appUsers.stream()
+                .filter(u -> u.getAccount().equals(account))
+                .findFirst()
+                .orElseThrow(() -> AccountNotFoundException.withDetail(account));
     }
 
     /**
@@ -61,12 +87,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public AuthTokens login(LoginRequest request) {
-        User findUser;
-        try {
-            findUser = userRepository.findAllByAccount(request.getAccount(), request.getApplication()).get(0);
-        } catch (IndexOutOfBoundsException ex) {
-            throw AccountNotFoundException.withDetail(request.getAccount());
-        }
+
+        User findUser = findByAccount(request.getAccount(), request.getApplication());
+
         if (!findUser.isSamePassword(request.getPassword(), passwordEncoder)) {
             throw UnAuthenticationException.withDetail("비밀번호가 틀렸습니다.");
         }
@@ -144,18 +167,15 @@ public class UserServiceImpl implements UserService {
         String refreshToken = null;
         // 회원 DB에 있다면 token만 전달
         try {
-            User user = this.userRepository.findAllByAccount(account, application).get(0);
+            User user = findByAccount(account, application);
             accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
             refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
             // refresh Token 토큰 저장.
             userTokenRepository.save(UserToken.create(user.getId(), refreshToken));
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (AccountNotFoundException ex) {
             // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }
-
         return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
-
-
     }
 
 

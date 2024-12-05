@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @Tag(name = "유저관련 API", description = "회원가입, 로그인, 로그아웃, 토큰 리프레시 등등")
 public interface UserApi {
 
-    @Operation(summary = "통합 회원가입 API")
+    @Operation(summary = "통합 회원가입 API", description = "Request Body의 Schema 버튼 눌러서 필수 속성 확인해주세요.")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "회원가입 성공")
     )

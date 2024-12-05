@@ -6,9 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 public class SignUpRequest {
+
+    /*==필수 속성들==*/
     @NotBlank(message = "회원 가입 ID를 반드시 입력해주세요")
     @Schema(
             description = "회원 ID",
@@ -21,23 +25,12 @@ public class SignUpRequest {
             example = "1234")
     private String password;
 
-    @Schema(
-            nullable = true,
-            description = "이름",
-            example = "홍길동")
-    private String name;
-
-    @Schema(
-            nullable = true,
-            description = "별명",
-            example = "GilBro")
-    private String nickname;
-
     @NotBlank(message = "전화번호를 반드시 입력해주세요")
     @Schema(
             description = "전화번호",
             example = "010-1234-5678")
     private String phone;
+
 
     @NotBlank(message = "회원 종류를 반드시 입력해주세요")
     @Schema(
@@ -53,6 +46,33 @@ public class SignUpRequest {
     )
     private String application;
 
+
+    /*==Optional 속성들==*/
+    @Schema(
+            nullable = true,
+            description = "이름",
+            example = "홍길동")
+    private String name;
+    @Schema(
+            nullable = true,
+            description = "별명",
+            example = "GilBro")
+    private String nickname;
+    @Schema(
+            nullable = true,
+            description = "출생년도",
+            example = "2000-01-01")
+    private LocalDate birthYear;
+    @Schema(
+            nullable = true,
+            description = "성별",
+            example = "남")
+    private Gender gender;
+    @Schema(
+            nullable = true,
+            description = "키(cm)",
+            example = "198")
+    private Integer height;
     @Schema(
             nullable = true,
             defaultValue = "ko",
