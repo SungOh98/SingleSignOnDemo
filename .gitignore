@@ -40,4 +40,7 @@ out/
 
 /src/main/resources/application.yml
 /src/test/resources/application.yml
+
+# 로그파일 #
 **/app.log
+**/logs
