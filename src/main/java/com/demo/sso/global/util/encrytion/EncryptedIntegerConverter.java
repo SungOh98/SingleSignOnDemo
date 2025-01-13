@@ -8,18 +8,22 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Converter
-public class OnlyEncryptionConverter  implements AttributeConverter<String, String> {
+public class EncryptedIntegerConverter implements AttributeConverter<Integer, String> {
     private final TwoWayEncryption twoWayEncryption;
+
     @Override
-    public String convertToDatabaseColumn(String attribute) {
+    public String convertToDatabaseColumn(Integer attribute) {
         if (attribute == null) {
             return null;
         }
-        return twoWayEncryption.encrypt(attribute);
+        return twoWayEncryption.encrypt(String.valueOf(attribute));
     }
 
     @Override
-    public String convertToEntityAttribute(String dbData) {
-        return dbData;
+    public Integer convertToEntityAttribute(String dbData) {
+        if (dbData == null) {
+            return null;
+        }
+        return Integer.parseInt(twoWayEncryption.decrypt(dbData));
     }
 }

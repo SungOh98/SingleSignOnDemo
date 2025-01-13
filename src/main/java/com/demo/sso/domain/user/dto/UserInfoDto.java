@@ -1,5 +1,6 @@
 package com.demo.sso.domain.user.dto;
 
+import com.demo.sso.domain.user.domain.Gender;
 import com.demo.sso.global.infra.kakao.KakaoInfoResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

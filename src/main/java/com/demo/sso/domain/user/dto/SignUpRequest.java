@@ -1,5 +1,6 @@
 package com.demo.sso.domain.user.dto;
 
+import com.demo.sso.domain.user.domain.Gender;
 import com.demo.sso.domain.user.domain.Language;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class SignUpRequest {
 
-    /*==필수 속성들==*/
     @NotBlank(message = "회원 가입 ID를 반드시 입력해주세요")
     @Schema(
             description = "회원 ID",
@@ -47,7 +47,6 @@ public class SignUpRequest {
     private String application;
 
 
-    /*==Optional 속성들==*/
     @Schema(
             nullable = true,
             description = "이름",

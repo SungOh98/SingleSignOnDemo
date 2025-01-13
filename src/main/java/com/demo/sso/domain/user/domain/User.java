@@ -4,11 +4,15 @@ import com.demo.sso.domain.BaseEntity;
 import com.demo.sso.domain.hospital.domain.Hospital;
 import com.demo.sso.domain.user.dto.SignUpRequest;
 import com.demo.sso.domain.user.dto.UpdateUserRequest;
-import com.demo.sso.global.util.encrytion.CryptoConverter;
-import com.demo.sso.global.util.encrytion.OnlyEncryptionConverter;
+import com.demo.sso.global.util.encrytion.EncryptedGenderConverter;
+import com.demo.sso.global.util.encrytion.EncryptedIntegerConverter;
+import com.demo.sso.global.util.encrytion.EncryptedLocalDateConverter;
+import com.demo.sso.global.util.encrytion.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.time.LocalDate;
 
 import static jakarta.persistence.GenerationType.*;
 
@@ -20,28 +24,26 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    /*==필수 속성들(암/복호화 모두 수행)==*/
-    @Convert(converter = CryptoConverter.class)
+    @Convert(converter = EncryptedStringConverter.class)
     private String account;
     private String password;
-    @Convert(converter = CryptoConverter.class)
+    @Convert(converter = EncryptedStringConverter.class)
     private String phone;
+
     private String userType;
     private String application;
 
-
-    /*==Optional 속성들(복호화는 안함.)==*/
-    @Convert(converter = CryptoConverter.class)
+    @Convert(converter = EncryptedStringConverter.class)
     private String name;
-    @Convert(converter = CryptoConverter.class)
+    @Convert(converter = EncryptedStringConverter.class)
     private String nickname;
-    @Convert(converter = CryptoConverter.class)
-    private String gender;
-    @Convert(converter = CryptoConverter.class)
+    @Convert(converter = EncryptedGenderConverter.class)
+    private Gender gender;
+    @Convert(converter = EncryptedLocalDateConverter.class)
     @Column(name = "birthyear")
-    private String birthYear;
-    @Convert(converter = CryptoConverter.class)
-    private String height;
+    private LocalDate birthYear;
+    @Convert(converter = EncryptedIntegerConverter.class)
+    private Integer height;
     @Enumerated(EnumType.STRING)
     private Language language = Language.ko;
     private Boolean isActive;
@@ -63,9 +65,9 @@ public class User extends BaseEntity {
         user.setLanguage(request.getLanguage());
         user.isActive = true;
         user.alarmAvailable = true;
-        user.birthYear = String.valueOf(request.getBirthYear());
-        user.height = String.valueOf(request.getHeight());
-        user.gender = String.valueOf(request.getGender());
+        user.birthYear = request.getBirthYear();
+        user.height = request.getHeight();
+        user.gender = request.getGender();
         user.updateName();
         return user;
     }
@@ -78,6 +80,9 @@ public class User extends BaseEntity {
         this.gender = request.getGender() != null ? request.getGender() : this.gender;
         this.birthYear = request.getBirthYear() != null ? request.getBirthYear() : this.birthYear;
         this.height = request.getHeight() != null ? request.getHeight() : this.height;
+        this.language = request.getLanguage() != null ? request.getLanguage() : this.language;
+        this.isActive = request.getIsActive() != null ? request.getIsActive() : this.isActive;
+        this.alarmAvailable = request.getAlarmAvailable() != null ? request.getAlarmAvailable() : this.alarmAvailable;
     }
 
     public void setLanguage(Language language) {
