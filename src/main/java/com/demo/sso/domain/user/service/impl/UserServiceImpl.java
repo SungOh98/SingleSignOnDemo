@@ -33,8 +33,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long totalSignUp(SignUpRequest request) {
+        List<User> appUsers = userRepository.findAllByApplication(request.getApplication());
         // 계정, 폰 중복 검사
-        validateDuplicate(request.getAccount(), request.getPhone(), request.getApplication());
+        validateDuplicate(request.getAccount(), request.getPhone(), appUsers);
         User user = User.create(request, passwordEncoder);
         userRepository.save(user);
         return user.getId();
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional(readOnly = true)
-    void validateDuplicate(String account, String phone, String application) {
+    void validateDuplicate(String account, String phone, List<User> appUsers) {
         /**
          ** 암호화 전 로직 **
          if (!userRepository.findAllByAccount(account, application).isEmpty())
@@ -51,7 +52,6 @@ public class UserServiceImpl implements UserService {
          throw DuplicatePhoneException.withDetail(phone);
          *
          */
-        List<User> appUsers = userRepository.findAllByApplication(application);
         for (User user : appUsers) {
             if (user.getAccount().equals(account)) throw DuplicateAccountException.withDetail(account);
             if (user.getPhone().equals(phone)) throw DuplicatePhoneException.withDetail(phone);
@@ -143,12 +143,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public List<User> users(String accessToken) {
-        jwtProvider.validateToken(accessToken);
-        return userRepository.findAll();
-    }
-
     /**
      * 카카오 로그인
      *
@@ -208,6 +202,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(Long userId, UpdateUserRequest request) {
         User user = this.userRepository.findOne(userId);
+        List<User> targetUsers = this.userRepository.findAllByApplication(user.getApplication())
+                .stream()
+                .filter((appUser) -> user != appUser)
+                .toList();
+        validateDuplicate(request.getAccount(), request.getPhone(), targetUsers);
         user.update(request);
     }
 

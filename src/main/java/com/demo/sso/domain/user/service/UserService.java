@@ -15,9 +15,6 @@ public interface UserService {
 
     TokenRefreshResponse refresh(TokenRefreshRequest request);
 
-    // 테스트
-    List<User> users(String accessToken);
-
     KakaoLoginResponse kakaoLogin(KakaoLoginParams params);
 
     Long totalSignUp(SignUpRequest request);
