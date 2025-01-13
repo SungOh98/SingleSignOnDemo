@@ -111,10 +111,9 @@ public class UserServiceImpl implements UserService {
      * 2.
      */
     @Override
-    public void logout(String token) {
-        Long userId = Long.parseLong(jwtProvider.getSubject(token));
+    public void logout(Long userId) {
         userTokenRepository.deleteById(userId);
-        userTokenRepository.addTokenToBlackList(userId, token);
+//        userTokenRepository.addTokenToBlackList(userId, token);
     }
 
     /**
@@ -197,6 +196,25 @@ public class UserServiceImpl implements UserService {
             // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }
         return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponse findUser(Long userId) {
+        User user = this.userRepository.findOne(userId);
+        return new UserResponse(user);
+    }
+
+    @Override
+    public void updateUser(Long userId, UpdateUserRequest request) {
+        User user = this.userRepository.findOne(userId);
+        user.update(request);
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        User user = this.userRepository.findOne(userId);
+        this.userRepository.delete(user);
     }
 
 

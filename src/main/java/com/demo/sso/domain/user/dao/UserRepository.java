@@ -1,11 +1,13 @@
 package com.demo.sso.domain.user.dao;
 
 import com.demo.sso.domain.user.domain.User;
+import com.demo.sso.domain.user.exception.UserNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,7 +19,12 @@ public class UserRepository {
     }
 
     public User findOne(Long id) {
-        return em.find(User.class, id);
+        return Optional.ofNullable(em.find(User.class, id))
+                .orElseThrow(() -> UserNotFoundException.withDetail("userId : " + id));
+    }
+
+    public void delete(User user) {
+        em.remove(user);
     }
 
 //    public List<User> findAllByAccount(String account, String application) {

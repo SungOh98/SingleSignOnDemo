@@ -22,9 +22,9 @@ public class Hospital extends BaseEntity {
     private String address;
     private String phone;
     private String homepage;
-    @Column(precision = 10, scale = 7)
+    @Column(precision = 10, scale = 7, name = "pos_y")
     private BigDecimal posY;
-    @Column(precision = 10, scale = 7)
+    @Column(precision = 10, scale = 7, name = "pos_x")
     private BigDecimal posX;
     private String imagePath;
 

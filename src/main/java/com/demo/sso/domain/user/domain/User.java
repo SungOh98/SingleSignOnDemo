@@ -3,6 +3,7 @@ package com.demo.sso.domain.user.domain;
 import com.demo.sso.domain.BaseEntity;
 import com.demo.sso.domain.hospital.domain.Hospital;
 import com.demo.sso.domain.user.dto.SignUpRequest;
+import com.demo.sso.domain.user.dto.UpdateUserRequest;
 import com.demo.sso.global.util.encrytion.CryptoConverter;
 import com.demo.sso.global.util.encrytion.OnlyEncryptionConverter;
 import jakarta.persistence.*;
@@ -30,16 +31,16 @@ public class User extends BaseEntity {
 
 
     /*==Optional 속성들(복호화는 안함.)==*/
-    @Convert(converter = OnlyEncryptionConverter.class)
+    @Convert(converter = CryptoConverter.class)
     private String name;
-    @Convert(converter = OnlyEncryptionConverter.class)
+    @Convert(converter = CryptoConverter.class)
     private String nickname;
-    @Convert(converter = OnlyEncryptionConverter.class)
+    @Convert(converter = CryptoConverter.class)
     private String gender;
-    @Convert(converter = OnlyEncryptionConverter.class)
+    @Convert(converter = CryptoConverter.class)
     @Column(name = "birthyear")
     private String birthYear;
-    @Convert(converter = OnlyEncryptionConverter.class)
+    @Convert(converter = CryptoConverter.class)
     private String height;
     @Enumerated(EnumType.STRING)
     private Language language = Language.ko;
@@ -67,6 +68,16 @@ public class User extends BaseEntity {
         user.gender = String.valueOf(request.getGender());
         user.updateName();
         return user;
+    }
+
+    public void update(UpdateUserRequest request) {
+        this.account = request.getAccount() != null ? request.getAccount() : this.account;
+        this.name = request.getName() != null ? request.getName() : this.name;
+        this.nickname = request.getNickname() != null ? request.getNickname() : this.nickname;
+        this.phone = request.getPhone() != null ? request.getPhone() : this.phone;
+        this.gender = request.getGender() != null ? request.getGender() : this.gender;
+        this.birthYear = request.getBirthYear() != null ? request.getBirthYear() : this.birthYear;
+        this.height = request.getHeight() != null ? request.getHeight() : this.height;
     }
 
     public void setLanguage(Language language) {

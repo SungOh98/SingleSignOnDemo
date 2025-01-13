@@ -56,7 +56,7 @@ public class SmsService {
         VerifyCode verifyCode = VerifyCode.create(phone, randomCode, requestCount);
         // 요청횟수 증가
         verifyCode.incrementRequestCount();
-        // 블랙리스트 대상인지 검사
+        // 신규 블랙리스트 대상인지 검사
         validateBlack(verifyCode);
         // 문자메시지 발송
         naverApiClient.requestSMS(

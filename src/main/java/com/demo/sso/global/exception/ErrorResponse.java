@@ -13,6 +13,12 @@ public class ErrorResponse {
         this.detail = detail;
         this.code = code.getCode();
     }
+
+    private ErrorResponse(String detail, int code) {
+        this.detail = detail;
+        this.code = code;
+    }
+
     public static ErrorResponse from(String message) {
         return new ErrorResponse(message, INTERNAL_SERVER_ERROR);
     }
@@ -20,4 +26,10 @@ public class ErrorResponse {
     public static ErrorResponse of(String message, CustomResponseCode code) {
         return new ErrorResponse(message, code);
     }
+
+    public static ErrorResponse of(String message, int code) {
+        return new ErrorResponse(message, code);
+    }
+
+
 }
