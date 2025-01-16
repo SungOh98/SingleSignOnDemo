@@ -26,6 +26,9 @@ public class User extends BaseEntity {
 
     @Convert(converter = EncryptedStringConverter.class)
     private String account;
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "kakao_account")
+    private String kakaoAccount;
     private String password;
     @Convert(converter = EncryptedStringConverter.class)
     private String phone;
@@ -48,6 +51,8 @@ public class User extends BaseEntity {
     private Language language = Language.ko;
     private Boolean isActive;
     private Boolean alarmAvailable;
+    @Column(name = "push_token")
+    private String pushToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hospital_id")
@@ -56,6 +61,7 @@ public class User extends BaseEntity {
     public static User create(SignUpRequest request, BCryptPasswordEncoder passwordEncoder) {
         User user = new User();
         user.account = request.getAccount();
+        user.kakaoAccount = request.getKakaoAccount();
         user.password = passwordEncoder.encode(request.getPassword());
         user.name = request.getName();
         user.nickname = request.getNickname();
@@ -74,6 +80,7 @@ public class User extends BaseEntity {
 
     public void update(UpdateUserRequest request) {
         this.account = request.getAccount() != null ? request.getAccount() : this.account;
+        this.kakaoAccount = request.getKakaoAccount() != null ? request.getKakaoAccount() : this.kakaoAccount;
         this.name = request.getName() != null ? request.getName() : this.name;
         this.nickname = request.getNickname() != null ? request.getNickname() : this.nickname;
         this.phone = request.getPhone() != null ? request.getPhone() : this.phone;
@@ -83,7 +90,9 @@ public class User extends BaseEntity {
         this.language = request.getLanguage() != null ? request.getLanguage() : this.language;
         this.isActive = request.getIsActive() != null ? request.getIsActive() : this.isActive;
         this.alarmAvailable = request.getAlarmAvailable() != null ? request.getAlarmAvailable() : this.alarmAvailable;
+        this.pushToken = request.getPushToken() != null ? request.getPushToken() : this.pushToken;
     }
+
 
     public void setLanguage(Language language) {
         if (language != null) this.language = language;

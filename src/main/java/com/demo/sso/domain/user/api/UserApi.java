@@ -108,7 +108,7 @@ public interface UserApi {
 
     @Operation(summary = "회원 정보 수정", security = {@SecurityRequirement(name = "bearerAuth")})
     @PutMapping("user")
-    ResponseEntity<SuccessResponse> updateUser(@UserId Long userId, @RequestBody @Valid UpdateUserRequest request);
+    ResponseEntity<UserResponse> updateUser(@UserId Long userId, @RequestBody @Valid UpdateUserRequest request);
 
 
     @Operation(summary = "회원 삭제", security = {@SecurityRequirement(name = "bearerAuth")})

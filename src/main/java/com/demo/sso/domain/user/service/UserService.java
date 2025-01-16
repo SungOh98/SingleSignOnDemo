@@ -23,7 +23,7 @@ public interface UserService {
 
     UserResponse findUser(Long userId);
 
-    void updateUser(Long userId, @Valid UpdateUserRequest request);
+    UserResponse updateUser(Long userId, @Valid UpdateUserRequest request);
 
     void deleteUser(Long userId);
 }

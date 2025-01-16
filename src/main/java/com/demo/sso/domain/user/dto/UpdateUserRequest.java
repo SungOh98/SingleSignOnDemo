@@ -11,6 +11,8 @@ import java.time.LocalDate;
 public class UpdateUserRequest {
     @Schema(description = "회원 계정", example = "gildong123")
     private String account;
+    @Schema(description = "카카오 계정", example = "gildong@kakao.com")
+    private String kakaoAccount;
     @Schema(description = "회원 이름", example = "홍길동")
     private String name;
     @Schema(description = "회원 별명", example = "홍길동 아님")
@@ -30,4 +32,6 @@ public class UpdateUserRequest {
     private Boolean isActive;
     @Schema(description = "회원 알람 허용 여부", example = "true")
     private Boolean alarmAvailable;
+    @Schema(description = "FCM 토큰", example = "dnekjfsbkkjdnqkdk")
+    private String pushToken;
 }

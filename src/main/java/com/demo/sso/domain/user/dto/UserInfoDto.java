@@ -15,7 +15,8 @@ import java.util.UUID;
 @Data
 public class UserInfoDto {
     public UserInfoDto(KakaoInfoResponse kakaoInfoResponse) {
-        this.account = kakaoInfoResponse.getAccount();
+        this.account = String.valueOf(UUID.randomUUID());
+        this.kakaoAccount = kakaoInfoResponse.getAccount();
         this.name = kakaoInfoResponse.getName();
         this.nickname = kakaoInfoResponse.getNickName();
         this.password = String.valueOf(UUID.randomUUID());
@@ -44,12 +45,19 @@ public class UserInfoDto {
         return phone.replace("+82 ", "0");
     }
 
+    @NotBlank(message = "계정은 서버에서 랜덤 생성.")
+    @Schema(
+            description = "계정",
+            example = "daledneffkdad"
+    )
+    private String account;
+
     @NotBlank(message = "카카오 계정은 반드시 얻음.")
     @Schema(
             description = "카카오 계정",
-            example = "gildong123"
+            example = "gildong123@kakao.com"
     )
-    private String account;
+    private String kakaoAccount;
 
     @Null
     @Schema(

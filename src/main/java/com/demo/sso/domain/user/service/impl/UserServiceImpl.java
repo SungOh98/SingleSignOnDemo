@@ -3,6 +3,7 @@ package com.demo.sso.domain.user.service.impl;
 import com.demo.sso.domain.user.dao.UserRepository;
 import com.demo.sso.domain.user.dto.*;
 import com.demo.sso.domain.user.exception.DuplicatePhoneException;
+import com.demo.sso.domain.user.exception.KakaoAccountNotFoundException;
 import com.demo.sso.global.auth.jwt.*;
 import com.demo.sso.domain.user.dao.UserTokenRepository;
 import com.demo.sso.domain.user.domain.User;
@@ -73,6 +74,16 @@ public class UserServiceImpl implements UserService {
                 .filter(u -> u.getAccount().equals(account))
                 .findFirst()
                 .orElseThrow(() -> AccountNotFoundException.withDetail(account));
+    }
+
+
+    @Transactional(readOnly = true)
+    User findByKakaoAccount(String kakaoAccount, String application) {
+        List<User> appUsers = userRepository.findAllByApplication(application);
+        return appUsers.stream()
+                .filter(u -> kakaoAccount.equals(u.getKakaoAccount()))
+                .findFirst()
+                .orElseThrow(() -> KakaoAccountNotFoundException.withDetail(kakaoAccount));
     }
 
     /**
@@ -153,19 +164,19 @@ public class UserServiceImpl implements UserService {
     public KakaoLoginResponse kakaoLogin(KakaoLoginParams params) {
         String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
         KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(kakaoAccessToken);
-        String account = kakaoInfoResponse.getAccount();
+        String kakaoAccount = kakaoInfoResponse.getAccount();
         String application = params.getApplication();
         UserInfoDto userInfoDto = new UserInfoDto(kakaoInfoResponse);
         String accessToken = null;
         String refreshToken = null;
         // 회원 DB에 있다면 token만 전달
         try {
-            User user = findByAccount(account, application);
+            User user = findByKakaoAccount(kakaoAccount, application);
             accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
             refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
             // refresh Token 토큰 저장.
             userTokenRepository.save(UserToken.create(user.getId(), refreshToken));
-        } catch (AccountNotFoundException ex) {
+        } catch (KakaoAccountNotFoundException ex) {
             // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }
         return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
@@ -174,19 +185,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public KakaoLoginResponse kakaoLoginByApp(KakaoTokenRequest request) {
         KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(request.getToken());
-        String account = kakaoInfoResponse.getAccount();
+        String kakaoAccount = kakaoInfoResponse.getAccount();
         String application = request.getApplication();
         UserInfoDto userInfoDto = new UserInfoDto(kakaoInfoResponse);
         String accessToken = null;
         String refreshToken = null;
         // 회원 DB에 있다면 token만 전달
         try {
-            User user = findByAccount(account, application);
+            User user = findByKakaoAccount(kakaoAccount, application);
             accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
             refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
             // refresh Token 토큰 저장.
             userTokenRepository.save(UserToken.create(user.getId(), refreshToken));
-        } catch (AccountNotFoundException ex) {
+        } catch (KakaoAccountNotFoundException ex) {
             // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }
         return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
@@ -200,7 +211,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(Long userId, UpdateUserRequest request) {
+    public UserResponse updateUser(Long userId, UpdateUserRequest request) {
         User user = this.userRepository.findOne(userId);
         List<User> targetUsers = this.userRepository.findAllByApplication(user.getApplication())
                 .stream()
@@ -208,6 +219,7 @@ public class UserServiceImpl implements UserService {
                 .toList();
         validateDuplicate(request.getAccount(), request.getPhone(), targetUsers);
         user.update(request);
+        return new UserResponse(user);
     }
 
     @Override

@@ -77,10 +77,10 @@ public class UserController implements UserApi {
     }
 
     @PutMapping("user")
-    public ResponseEntity<SuccessResponse> updateUser(@UserId Long userId, @RequestBody @Valid UpdateUserRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@UserId Long userId, @RequestBody @Valid UpdateUserRequest request) {
         log.info("{}", request);
-        this.userService.updateUser(userId, request);
-        return ResponseEntity.ok(SuccessResponse.from("success"));
+        UserResponse userResponse = this.userService.updateUser(userId, request);
+        return ResponseEntity.ok(userResponse);
     }
 
     @DeleteMapping("user")

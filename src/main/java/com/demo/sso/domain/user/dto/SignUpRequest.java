@@ -4,6 +4,7 @@ import com.demo.sso.domain.user.domain.Gender;
 import com.demo.sso.domain.user.domain.Language;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,6 +19,12 @@ public class SignUpRequest {
             description = "회원 ID",
             example = "gildong123")
     private String account;
+
+    @Null(message = "카카오로 회원 가입이라면 입력해주세요")
+    @Schema(
+            description = "카카오 계정",
+            example = "gildong@kakao.com")
+    private String kakaoAccount;
 
     @NotBlank(message = "비밀번호를 반드시 입력해주세요")
     @Schema(

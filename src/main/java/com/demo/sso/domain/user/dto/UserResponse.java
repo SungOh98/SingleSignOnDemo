@@ -11,9 +11,16 @@ import java.time.LocalDate;
 
 @Data
 public class UserResponse {
+
+    @NotBlank
+    @Schema(description = "회원 ID(Sequence)", example = "1")
+    private Long userId;
     @NotBlank
     @Schema(description = "회원 계정", example = "gildong123")
     private String account;
+    @Schema(description = "카카오 계정", example = "gildong@kakao.com")
+    private String kakaoAccount;
+
 
     @Schema(description = "회원 이름", example = "홍길동", nullable = true)
     private String name;
@@ -37,10 +44,14 @@ public class UserResponse {
     private Boolean isActive;
     @Schema(description = "회원 소속 병원 이름", example = "길병원", nullable = true)
     private String hospital;
+    @Schema(description = "FCM 토큰", example = "dnekjfsbkkjdnqkdk")
+    private String pushToken;
 
 
     public UserResponse(User user) {
+        this.userId = user.getId();
         this.account = user.getAccount();
+        this.kakaoAccount = user.getKakaoAccount();
         this.name = user.getName();
         this.nickname = user.getNickname();
         this.phone = user.getPhone();
@@ -51,5 +62,6 @@ public class UserResponse {
         this.alarmAvailable = user.getAlarmAvailable();
         this.isActive = user.getIsActive();
         this.hospital = user.getHospital() != null ? user.getHospital().getName() : null;
+        this.pushToken = user.getPushToken();
     }
 }
