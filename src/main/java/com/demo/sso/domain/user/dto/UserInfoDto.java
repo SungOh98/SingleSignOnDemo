@@ -19,7 +19,7 @@ public class UserInfoDto {
         this.name = kakaoInfoResponse.getName();
         this.nickname = kakaoInfoResponse.getNickName();
         this.password = String.valueOf(UUID.randomUUID());
-        this.phone = kakaoInfoResponse.getPhoneNumber();
+        this.phone = initPhone(kakaoInfoResponse.getPhoneNumber());
         this.gender = initGender(kakaoInfoResponse.getGender());
         this.birthyear = initBirthYear(kakaoInfoResponse.getBirthyear(), kakaoInfoResponse.getBirthday());
     }
@@ -37,6 +37,11 @@ public class UserInfoDto {
             else gen = Gender.여;
         }
         return gen;
+    }
+
+    private String initPhone(String phone) {
+        if (phone == null) return null;
+        return phone.replace("+82 ", "0");
     }
 
     @NotBlank(message = "카카오 계정은 반드시 얻음.")
