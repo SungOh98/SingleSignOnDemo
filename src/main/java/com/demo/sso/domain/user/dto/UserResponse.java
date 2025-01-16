@@ -14,7 +14,7 @@ public class UserResponse {
 
     @NotBlank
     @Schema(description = "회원 ID(Sequence)", example = "1")
-    private Long userId;
+    private Long id;
     @NotBlank
     @Schema(description = "회원 계정", example = "gildong123")
     private String account;
@@ -49,7 +49,7 @@ public class UserResponse {
 
 
     public UserResponse(User user) {
-        this.userId = user.getId();
+        this.id = user.getId();
         this.account = user.getAccount();
         this.kakaoAccount = user.getKakaoAccount();
         this.name = user.getName();
