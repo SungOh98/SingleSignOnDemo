@@ -108,6 +108,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(AccessTokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleAccessTokenExpiredException(AccessTokenExpiredException ex) {
+        log.warn("access token 만료 예외 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ErrorResponse.of(ex.getMessage(), ACCESS_TOKEN_TIMEOUT)
+                );
+    }
+
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(
             DataNotFoundException ex,

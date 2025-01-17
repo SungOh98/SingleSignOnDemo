@@ -1,6 +1,6 @@
 package com.demo.sso.global.auth.jwt;
 
-import com.demo.sso.global.auth.exception.UnAuthenticationException;
+import com.demo.sso.global.auth.exception.UnAuthorizationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -30,7 +30,7 @@ public class TokenUserIdArgumentResolver implements HandlerMethodArgumentResolve
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw UnAuthenticationException.withDetail("토큰이 없습니다");
+            throw UnAuthorizationException.withDetail("토큰이 없습니다");
         }
 
         String token = authorizationHeader.replace("Bearer ", "");
