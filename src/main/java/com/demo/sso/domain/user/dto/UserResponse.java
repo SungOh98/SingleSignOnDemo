@@ -42,8 +42,6 @@ public class UserResponse {
     private Boolean alarmAvailable;
     @Schema(description = "회원 활성 여부", example = "true", nullable = true)
     private Boolean isActive;
-    @Schema(description = "회원 소속 병원 이름", example = "길병원", nullable = true)
-    private String hospital;
     @Schema(description = "FCM 토큰", example = "dnekjfsbkkjdnqkdk")
     private String pushToken;
 
@@ -61,7 +59,6 @@ public class UserResponse {
         this.language = user.getLanguage();
         this.alarmAvailable = user.getAlarmAvailable();
         this.isActive = user.getIsActive();
-        this.hospital = user.getHospital() != null ? user.getHospital().getName() : null;
         this.pushToken = user.getPushToken();
     }
 }

@@ -1,7 +1,6 @@
 package com.demo.sso.domain.user.domain;
 
 import com.demo.sso.domain.BaseEntity;
-import com.demo.sso.domain.hospital.domain.Hospital;
 import com.demo.sso.domain.user.dto.SignUpRequest;
 import com.demo.sso.domain.user.dto.UpdateUserRequest;
 import com.demo.sso.global.util.encrytion.EncryptedGenderConverter;
@@ -54,9 +53,6 @@ public class User extends BaseEntity {
     @Column(name = "push_token")
     private String pushToken;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hospital_id")
-    private Hospital hospital;
 
     public static User create(SignUpRequest request, BCryptPasswordEncoder passwordEncoder) {
         User user = new User();
