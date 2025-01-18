@@ -32,7 +32,9 @@ public class User extends BaseEntity {
     @Convert(converter = EncryptedStringConverter.class)
     private String phone;
 
-    private String userType;
+    @Column(name = "user_type")
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
     private String application;
 
     @Convert(converter = EncryptedStringConverter.class)

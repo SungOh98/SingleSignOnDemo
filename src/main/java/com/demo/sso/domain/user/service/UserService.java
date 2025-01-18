@@ -26,5 +26,7 @@ public interface UserService {
     UserResponse updateUser(Long userId, @Valid UpdateUserRequest request);
 
     void deleteUser(Long userId);
+
+    List<User> findUsersById(@Valid SimpleUserRequest request);
 }
 

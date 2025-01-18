@@ -2,9 +2,11 @@ package com.demo.sso.domain.user.dto;
 
 import com.demo.sso.domain.user.domain.Gender;
 import com.demo.sso.domain.user.domain.Language;
+import com.demo.sso.domain.user.domain.UserType;
+import com.demo.sso.domain.user.dto.validator.ValidUserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -20,7 +22,6 @@ public class SignUpRequest {
             example = "gildong123")
     private String account;
 
-    @Null(message = "카카오로 회원 가입이라면 입력해주세요")
     @Schema(
             description = "카카오 계정",
             example = "gildong@kakao.com")
@@ -32,21 +33,20 @@ public class SignUpRequest {
             example = "1234")
     private String password;
 
-    @NotBlank(message = "전화번호를 반드시 입력해주세요")
     @Schema(
             description = "전화번호",
             example = "010-1234-5678")
     private String phone;
 
-
-    @NotBlank(message = "회원 종류를 반드시 입력해주세요")
+    @ValidUserType
+    @NotNull(message = "회원 종류를 반드시 입력해주세요")
     @Schema(
-            description = "회원 종류 (doctor, patient, ...)",
+            description = "회원 종류 (doctor, patient, ...), 어플리케이션에서 사용하는 테이블 명과 일치시켜주세요.",
             example = "doctor"
     )
-    private String userType;
+    private UserType userType;
 
-    @NotBlank(message = "회원의 소속 어플리케이션을 반드시 입력해주세요")
+    @NotBlank(message = "어플리케이션 명을 반드시 입력해주세요")
     @Schema(
             description = "어플리케이션명 (dialysis, ...)",
             example = "dialysis"

@@ -65,6 +65,18 @@ public class UserRepository {
                 .getResultList();
     }
 
+    public List<User> findAllByIdList(List<Long> idList) {
+        String query = """
+                SELECT u
+                FROM User u
+                WHERE u.id IN (:idList)
+                """;
+
+        return em.createQuery(query, User.class)
+                .setParameter("idList", idList)
+                .getResultList();
+    }
+
 
     public List<User> findAll() {
         return em.createQuery("SELECT u FROM User u", User.class).getResultList();

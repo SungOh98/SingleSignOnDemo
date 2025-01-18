@@ -228,5 +228,9 @@ public class UserServiceImpl implements UserService {
         this.userRepository.delete(user);
     }
 
+    @Override
+    public List<User> findUsersById(SimpleUserRequest request) {
+        return this.userRepository.findAllByIdList(request.getUsers());
+    }
 
 }

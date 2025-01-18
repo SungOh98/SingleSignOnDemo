@@ -1,5 +1,8 @@
 package com.demo.sso.global.auth.jwt;
 
+import com.demo.sso.domain.user.dao.UserRepository;
+import com.demo.sso.domain.user.domain.User;
+import com.demo.sso.domain.user.domain.UserType;
 import com.demo.sso.global.auth.exception.UnAuthorizationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +15,15 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-public class TokenUserIdArgumentResolver implements HandlerMethodArgumentResolver {
+public class TokenAdminIdArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         // @TokenUserId 어노테이션이 있는지 확인
-        return parameter.getParameterAnnotation(UserOnly.class) != null;
+        return parameter.getParameterAnnotation(AdminOnly.class) != null;
     }
 
     @Override
@@ -35,8 +39,12 @@ public class TokenUserIdArgumentResolver implements HandlerMethodArgumentResolve
 
         String token = authorizationHeader.replace("Bearer ", "");
 
+        Long userId = Long.parseLong(jwtProvider.getSubject(token));
+        User user = userRepository.findOne(userId);
+
+        if (!user.getUserType().equals(UserType.admin)) throw UnAuthorizationException.withDetail("관리자만 접근할 수 있습니다.");
 
         // JWT 토큰에서 userId 추출
-        return Long.parseLong(jwtProvider.getSubject(token));
+        return userId;
     }
 }
