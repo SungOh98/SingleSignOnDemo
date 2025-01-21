@@ -227,4 +227,12 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findAllByIdList(request.getUsers());
     }
 
+    @Override
+    public List<User> findUsersByName(SearchUserRequest request) {
+        return this.userRepository.findAllByIdList(request.getUsers()).stream()
+                .filter(u -> u.getName().startsWith(request.getName()))
+                .toList();
+
+    }
+
 }

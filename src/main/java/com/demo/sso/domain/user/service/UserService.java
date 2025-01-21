@@ -28,5 +28,7 @@ public interface UserService {
     void deleteUser(Long userId);
 
     List<User> findUsersById(@Valid SimpleUserRequest request);
+
+    List<User> findUsersByName(SearchUserRequest request);
 }
 

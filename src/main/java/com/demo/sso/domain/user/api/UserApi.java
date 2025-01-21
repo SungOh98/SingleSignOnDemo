@@ -45,4 +45,8 @@ public interface UserApi {
     @GetMapping("users")
     ResponseEntity<UsersResponse> getUsers(@AdminOnly Long userId, @RequestParam String application);
 
+    @Operation(summary = "회원 이름으로 목록 조회(API Gateway가 사용)", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PostMapping("users/name")
+    ResponseEntity<SimpleUserResponse> getUsers(@UserOnly Long userId, @RequestBody @Valid SearchUserRequest request);
+
 }

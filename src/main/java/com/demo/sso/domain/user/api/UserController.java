@@ -62,5 +62,11 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(new UsersResponse(users));
     }
 
+    @PostMapping("users/name")
+    public ResponseEntity<SimpleUserResponse> getUsers(@UserOnly Long userId, @RequestBody @Valid SearchUserRequest request) {
+        List<User> users = this.userService.findUsersByName(request);
+        return ResponseEntity.ok(new SimpleUserResponse(users));
+    }
+
 
 }
