@@ -169,25 +169,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public KakaoLoginResponse kakaoLogin(KakaoLoginParams params) {
         String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
-        KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(kakaoAccessToken);
-        String application = params.getApplication();
-        UserInfoDto userInfoDto = new UserInfoDto(kakaoInfoResponse);
-        String accessToken = null;
-        String refreshToken = null;
-
-        String phone = userInfoDto.getPhone();
-        // 회원 DB에 있다면 token만 전달
-        try {
-            User user = findByPhone(phone, application);
-            user.setKakaoAccount(userInfoDto.getKakaoAccount());
-            accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
-            refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
-            // refresh Token 토큰 저장.
-            userTokenRepository.save(UserToken.create(user.getId(), refreshToken));
-        } catch (PhoneNotFoundException ex) {
-            // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
-        }
-        return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
+        return kakaoLoginByApp(
+                new KakaoTokenRequest(kakaoAccessToken, params.getApplication())
+        );
     }
 
     @Override
