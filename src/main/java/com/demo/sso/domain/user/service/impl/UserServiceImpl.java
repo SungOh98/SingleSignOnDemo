@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
     User findByPhone(String phone, String application) {
         List<User> appUsers = userRepository.findAllByApplication(application);
         return appUsers.stream()
-                .filter(u -> phone.equals(u.getPhone()))
+                .filter(u -> u.getPhone().equals(phone))
                 .findFirst()
                 .orElseThrow(() -> PhoneNotFoundException.withDetail(String.format("어플리케이션: %s 폰 번호 : %s", application, phone)));
     }
