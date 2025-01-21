@@ -2,9 +2,11 @@ package com.demo.sso.domain.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class KakaoTokenRequest {
     @NotBlank(message = "반드시 토큰을 입력해주세요.")
     @Schema(

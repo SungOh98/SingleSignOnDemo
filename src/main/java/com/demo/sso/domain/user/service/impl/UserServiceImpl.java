@@ -2,13 +2,10 @@ package com.demo.sso.domain.user.service.impl;
 
 import com.demo.sso.domain.user.dao.UserRepository;
 import com.demo.sso.domain.user.dto.*;
-import com.demo.sso.domain.user.exception.DuplicatePhoneException;
-import com.demo.sso.domain.user.exception.KakaoAccountNotFoundException;
+import com.demo.sso.domain.user.exception.*;
 import com.demo.sso.global.auth.jwt.*;
 import com.demo.sso.domain.user.dao.UserTokenRepository;
 import com.demo.sso.domain.user.domain.User;
-import com.demo.sso.domain.user.exception.AccountNotFoundException;
-import com.demo.sso.domain.user.exception.DuplicateAccountException;
 import com.demo.sso.domain.user.service.UserService;
 import com.demo.sso.global.auth.exception.UnAuthenticationException;
 import com.demo.sso.global.infra.kakao.KakaoApiClient;
@@ -84,6 +81,15 @@ public class UserServiceImpl implements UserService {
                 .filter(u -> kakaoAccount.equals(u.getKakaoAccount()))
                 .findFirst()
                 .orElseThrow(() -> KakaoAccountNotFoundException.withDetail(kakaoAccount));
+    }
+
+    @Transactional(readOnly = true)
+    User findByPhone(String phone, String application) {
+        List<User> appUsers = userRepository.findAllByApplication(application);
+        return appUsers.stream()
+                .filter(u -> phone.equals(u.getPhone()))
+                .findFirst()
+                .orElseThrow(() -> PhoneNotFoundException.withDetail(String.format("어플리케이션: %s 폰 번호 : %s", application, phone)));
     }
 
     /**
@@ -164,19 +170,21 @@ public class UserServiceImpl implements UserService {
     public KakaoLoginResponse kakaoLogin(KakaoLoginParams params) {
         String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
         KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(kakaoAccessToken);
-        String kakaoAccount = kakaoInfoResponse.getAccount();
         String application = params.getApplication();
         UserInfoDto userInfoDto = new UserInfoDto(kakaoInfoResponse);
         String accessToken = null;
         String refreshToken = null;
+
+        String phone = userInfoDto.getPhone();
         // 회원 DB에 있다면 token만 전달
         try {
-            User user = findByKakaoAccount(kakaoAccount, application);
+            User user = findByPhone(phone, application);
+            user.setKakaoAccount(userInfoDto.getKakaoAccount());
             accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
             refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
             // refresh Token 토큰 저장.
             userTokenRepository.save(UserToken.create(user.getId(), refreshToken));
-        } catch (KakaoAccountNotFoundException ex) {
+        } catch (PhoneNotFoundException ex) {
             // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
         }
         return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
@@ -185,20 +193,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public KakaoLoginResponse kakaoLoginByApp(KakaoTokenRequest request) {
         KakaoInfoResponse kakaoInfoResponse = kakaoApiClient.requestUserInfo(request.getToken());
-        String kakaoAccount = kakaoInfoResponse.getAccount();
         String application = request.getApplication();
         UserInfoDto userInfoDto = new UserInfoDto(kakaoInfoResponse);
         String accessToken = null;
         String refreshToken = null;
+
+        String phone = userInfoDto.getPhone();
         // 회원 DB에 있다면 token만 전달
         try {
-            User user = findByKakaoAccount(kakaoAccount, application);
+            User user = findByPhone(phone, application);
+            user.setKakaoAccount(userInfoDto.getKakaoAccount());
             accessToken = jwtProvider.createToken(String.valueOf(user.getId()));
             refreshToken = userTokenProvider.createToken(String.valueOf(user.getId()));
             // refresh Token 토큰 저장.
             userTokenRepository.save(UserToken.create(user.getId(), refreshToken));
-        } catch (KakaoAccountNotFoundException ex) {
-            // 회원 DB에 없다면 회원 정보만 전달 => 프론트에서 회원 가입 처리 + 로그인
+        } catch (PhoneNotFoundException ex) {
+            // 해당 핸드폰의 User가 없을 경우 -> 가입 처리
         }
         return new KakaoLoginResponse(accessToken, refreshToken, userInfoDto);
     }

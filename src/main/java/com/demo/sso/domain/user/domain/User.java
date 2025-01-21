@@ -9,6 +9,7 @@ import com.demo.sso.global.util.encrytion.EncryptedLocalDateConverter;
 import com.demo.sso.global.util.encrytion.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
@@ -25,9 +26,11 @@ public class User extends BaseEntity {
 
     @Convert(converter = EncryptedStringConverter.class)
     private String account;
+
     @Convert(converter = EncryptedStringConverter.class)
-    @Column(name = "kakao_account")
+    @Column(name = "kakao_account") @Setter
     private String kakaoAccount;
+
     private String password;
     @Convert(converter = EncryptedStringConverter.class)
     private String phone;
