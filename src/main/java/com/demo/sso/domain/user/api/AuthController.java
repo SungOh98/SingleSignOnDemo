@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("api")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin("*")
@@ -22,33 +22,39 @@ public class AuthController implements AuthApi{
     private final UserService userService;
     private final SmsService smsService;
 
-    @PostMapping("login/kakao")
+    @PostMapping("v1/login/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody @Valid KakaoLoginParams params) {
-        KakaoLoginResponse kakaoLoginResponse = userService.kakaoLogin(params);
+        KakaoLoginResponse kakaoLoginResponse = userService.kakaoLoginV1(params);
         return ResponseEntity.ok(kakaoLoginResponse);
     }
 
-    @PostMapping("login/kakao/app")
+    @PostMapping("v2/login/kakao")
+    public ResponseEntity<KakaoLoginResponse> kakaoLoginV2(@RequestBody @Valid KakaoLoginParams params) {
+        KakaoLoginResponse kakaoLoginResponse = userService.kakaoLoginV2(params);
+        return ResponseEntity.ok(kakaoLoginResponse);
+    }
+
+    @PostMapping("v1/login/kakao/app")
     public ResponseEntity<KakaoLoginResponse> kakaoLoginByApp(@RequestBody KakaoTokenRequest request) {
         KakaoLoginResponse kakaoLoginResponse = userService.kakaoLoginByApp(request);
         return ResponseEntity.ok(kakaoLoginResponse);
     }
 
 
-    @PostMapping("login")
+    @PostMapping("v1/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
         AuthTokens tokens = userService.login(request);
         return ResponseEntity.ok(new LoginResponse(tokens));
     }
 
 
-    @PostMapping("logout")
+    @PostMapping("v1/logout")
     public ResponseEntity<SuccessResponse> logout(@UserOnly Long userId) {
         userService.logout(userId);
         return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
-    @PostMapping("refresh")
+    @PostMapping("v1/refresh")
     public ResponseEntity<TokenRefreshResponse> refresh(
             @RequestBody @Valid TokenRefreshRequest request
     ) {
@@ -57,13 +63,13 @@ public class AuthController implements AuthApi{
     }
 
 
-    @PostMapping("sms")
+    @PostMapping("v1/sms")
     public ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception {
         this.smsService.sendVerifyCode(request.getPhone(), request.getApplication());
         return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
-    @PostMapping("sms/verification")
+    @PostMapping("v1/sms/verification")
     public ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request) {
         this.smsService.verifyCode(request.getPhone(), request.getCode());
         return ResponseEntity.ok(SuccessResponse.from("success"));

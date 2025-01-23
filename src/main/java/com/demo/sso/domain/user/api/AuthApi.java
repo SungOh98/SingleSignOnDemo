@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "인증 관련 API", description = "여러 어플리케이션 클라이언트가 사용하는 통합 인증 API")
@@ -23,22 +22,26 @@ public interface AuthApi {
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "로그인 성공")
     )
-    @PostMapping("login")
     ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request);
 
-    @Operation(summary = "카카오 로그인 API")
+    @Operation(summary = "카카오 로그인 API", description = "카카오에서 휴대폰 번호를 못 받을 경우 사용.")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "로그인 성공")
     )
-    @PostMapping("login/kakao")
     ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody @Valid KakaoLoginParams params);
+
+
+    @Operation(summary = "카카오 로그인 API V2", description = "카카오에서 휴대폰 번호를 받을 수 있을 경우")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    )
+    ResponseEntity<KakaoLoginResponse> kakaoLoginV2(@RequestBody @Valid KakaoLoginParams params);
 
 
     @Operation(summary = "카카오 로그인 API(App)")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "로그인 성공")
     )
-    @PostMapping("login/kakao/app")
     ResponseEntity<KakaoLoginResponse> kakaoLoginByApp(@RequestBody KakaoTokenRequest request);
 
     @Operation(summary = "문자 전송 요청 API")
@@ -55,7 +58,6 @@ public interface AuthApi {
     }
             // 429
     )
-    @PostMapping("sms")
     ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception;
 
     @Operation(summary = "문자 인증 API")
@@ -72,7 +74,6 @@ public interface AuthApi {
                     , content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
     })
-    @PostMapping("sms/verification")
     ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request);
 
 
@@ -80,17 +81,12 @@ public interface AuthApi {
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "토큰 재발급 성공")
     )
-    @PostMapping("refresh")
-    ResponseEntity<TokenRefreshResponse> refresh(
-            @RequestBody @Valid TokenRefreshRequest request
-    );
+    ResponseEntity<TokenRefreshResponse> refresh(@RequestBody @Valid TokenRefreshRequest request);
 
     @Operation(summary = "로그아웃 API", security = {@SecurityRequirement(name = "bearerAuth")})
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     )
-    @PostMapping("logout")
-    @SecurityRequirement(name = "Jwt Authentication")
     ResponseEntity<SuccessResponse> logout(@UserOnly Long userId);
 
 }

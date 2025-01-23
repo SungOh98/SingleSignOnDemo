@@ -1,4 +1,4 @@
-package com.demo.sso.global.infra.naver;
+package com.demo.sso.global.infra.naver.sms;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

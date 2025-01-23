@@ -15,19 +15,21 @@ public interface UserService {
 
     TokenRefreshResponse refresh(TokenRefreshRequest request);
 
-    KakaoLoginResponse kakaoLogin(KakaoLoginParams params);
-
     Long totalSignUp(SignUpRequest request);
+
+    KakaoLoginResponse kakaoLoginV1(KakaoLoginParams params);
+
+    KakaoLoginResponse kakaoLoginV2(KakaoLoginParams params);
 
     KakaoLoginResponse kakaoLoginByApp(KakaoTokenRequest request);
 
     UserResponse findUser(Long userId);
 
-    UserResponse updateUser(Long userId, @Valid UpdateUserRequest request);
+    UserResponse updateUser(Long userId, UpdateUserRequest request);
 
     void deleteUser(Long userId);
 
-    List<User> findUsersById(@Valid SimpleUserRequest request);
+    List<User> findUsersById(SimpleUserRequest request);
 
     List<User> findUsersByName(SearchUserRequest request);
 }

@@ -3,7 +3,7 @@ package com.demo.sso.global.auth.sms;
 import com.demo.sso.global.auth.exception.ExpiredCodeException;
 import com.demo.sso.global.auth.exception.TooManyRequestException;
 import com.demo.sso.global.auth.exception.UnValidCodeException;
-import com.demo.sso.global.infra.naver.NaverApiClient;
+import com.demo.sso.global.infra.naver.sms.NaverApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
