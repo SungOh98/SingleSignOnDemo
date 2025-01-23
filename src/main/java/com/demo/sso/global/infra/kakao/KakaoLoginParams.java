@@ -3,7 +3,6 @@ package com.demo.sso.global.infra.kakao;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,7 +24,7 @@ public class KakaoLoginParams {
     private String application;
 
     @JsonProperty("redirect-uri")
-    @NotBlank(message = "리다이렉트 URI를 넘겨주세요")
+    @NotBlank(message = "반드시 리다이렉트 URI를 넘겨주세요")
     @Schema(
             description = "카카오 로그인 Redirect URI",
             example = "https://dialysis.livincare.kr/kakao"

@@ -1,5 +1,6 @@
 package com.demo.sso.domain.user.dto;
 
+import com.demo.sso.domain.user.domain.Gender;
 import com.demo.sso.global.infra.kakao.KakaoInfoResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -14,11 +15,12 @@ import java.util.UUID;
 @Data
 public class UserInfoDto {
     public UserInfoDto(KakaoInfoResponse kakaoInfoResponse) {
-        this.account = kakaoInfoResponse.getAccount();
+        this.account = String.valueOf(UUID.randomUUID());
+        this.kakaoAccount = kakaoInfoResponse.getAccount();
         this.name = kakaoInfoResponse.getName();
         this.nickname = kakaoInfoResponse.getNickName();
         this.password = String.valueOf(UUID.randomUUID());
-        this.phone = kakaoInfoResponse.getPhoneNumber();
+        this.phone = initPhone(kakaoInfoResponse.getPhoneNumber());
         this.gender = initGender(kakaoInfoResponse.getGender());
         this.birthyear = initBirthYear(kakaoInfoResponse.getBirthyear(), kakaoInfoResponse.getBirthday());
     }
@@ -38,12 +40,24 @@ public class UserInfoDto {
         return gen;
     }
 
+    private String initPhone(String phone) {
+        if (phone == null) return null;
+        return phone.replace("+82 ", "0");
+    }
+
+    @NotBlank(message = "계정은 서버에서 랜덤 생성.")
+    @Schema(
+            description = "계정",
+            example = "daledneffkdad"
+    )
+    private String account;
+
     @NotBlank(message = "카카오 계정은 반드시 얻음.")
     @Schema(
             description = "카카오 계정",
-            example = "gildong123"
+            example = "gildong123@kakao.com"
     )
-    private String account;
+    private String kakaoAccount;
 
     @Null
     @Schema(

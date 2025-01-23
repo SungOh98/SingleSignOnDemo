@@ -1,10 +1,9 @@
-package com.demo.sso.global.infra.naver;
+package com.demo.sso.global.infra.naver.sms;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,7 +15,7 @@ public class NaverSmsRequestDto {
     private String type;
     private String from;
     private String content;
-    private List<MessageDto> messages = new ArrayList<>();
+    private List<MessageDto> messages;
 
     // Optional
 

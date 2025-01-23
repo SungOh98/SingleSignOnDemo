@@ -1,8 +1,8 @@
 package com.demo.sso.domain.user.dto;
 
 
+import com.demo.sso.domain.user.domain.Gender;
 import com.demo.sso.global.infra.kakao.KakaoInfoResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -30,5 +30,18 @@ class UserInfoDtoTest {
         assertEquals(dateRes, userInfoDto.getBirthyear());
         assertEquals(genRes, userInfoDto.getGender());
      }
+
+     @Test
+     public void 열거형_Test() throws Exception{
+         //given
+         Gender gender = Gender.남;
+
+         System.out.print(gender.name());
+         System.out.print(gender.toString());
+         //when
+
+         //then
+
+      }
 
 }

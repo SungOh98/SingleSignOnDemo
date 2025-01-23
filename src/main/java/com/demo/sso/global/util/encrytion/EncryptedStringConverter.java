@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Converter
-public class CryptoConverter implements AttributeConverter<String, String> {
+public class EncryptedStringConverter implements AttributeConverter<String, String> {
     private final TwoWayEncryption twoWayEncryption;
 
     @Override

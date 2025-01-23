@@ -40,7 +40,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String errorMessages = ex.getBindingResult().getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("\n"));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.from(errorMessages));
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ErrorResponse.of(errorMessages, HttpStatus.BAD_REQUEST.value())
+                );
     }
 
     @ExceptionHandler(ExpiredCodeException.class)
@@ -72,13 +76,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UnAuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(UnAuthenticationException ex) {
         log.warn("인증 예외 발생 : {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.from(ex.getMessage()));
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ErrorResponse.of(ex.getMessage(), HttpStatus.UNAUTHORIZED.value())
+                );
     }
 
     @ExceptionHandler(UnAuthorizationException.class)
     public ResponseEntity<ErrorResponse> handleAuthorizationException(UnAuthorizationException ex) {
         log.warn("인가(권한) 예외 발생 : {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponse.from(ex.getMessage()));
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(
+                        ErrorResponse.of(ex.getMessage(), HttpStatus.FORBIDDEN.value())
+                );
     }
 
     @ExceptionHandler(JwtException.class)
@@ -96,15 +108,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(AccessTokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleAccessTokenExpiredException(AccessTokenExpiredException ex) {
+        log.warn("access token 만료 예외 : {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ErrorResponse.of(ex.getMessage(), ACCESS_TOKEN_TIMEOUT)
+                );
+    }
+
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(
             DataNotFoundException ex,
             HttpServletRequest request
     ) {
         log.warn("데이터 찾을 수 없는 예외 발생!!\n {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.from(
-                ex.getMessage()
-        ));
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ErrorResponse.of(ex.getMessage(), HttpStatus.NOT_FOUND.value())
+                );
     }
 
     @ExceptionHandler(DuplicateException.class)
@@ -113,9 +136,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpServletRequest request
     ) {
         log.warn("데이터 중복 예외 발생!!\n {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.from(
-                ex.getMessage()
-        ));
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(
+                        ErrorResponse.of(ex.getMessage(), HttpStatus.CONFLICT.value())
+                );
     }
 
 

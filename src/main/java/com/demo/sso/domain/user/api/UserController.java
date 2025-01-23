@@ -1,11 +1,12 @@
 package com.demo.sso.domain.user.api;
 
+import com.demo.sso.domain.user.dao.UserRepository;
+import com.demo.sso.domain.user.domain.User;
 import com.demo.sso.domain.user.dto.*;
 import com.demo.sso.domain.user.service.UserService;
-import com.demo.sso.global.auth.jwt.AuthTokens;
-import com.demo.sso.global.auth.sms.SmsService;
+import com.demo.sso.global.auth.jwt.AdminOnly;
+import com.demo.sso.global.auth.jwt.UserOnly;
 import com.demo.sso.global.exception.SuccessResponse;
-import com.demo.sso.global.infra.kakao.KakaoLoginParams;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("api/v1")
@@ -22,67 +23,49 @@ import java.util.stream.Collectors;
 @CrossOrigin("*")
 public class UserController implements UserApi {
     private final UserService userService;
-    private final SmsService smsService;
+    private final UserRepository userRepository;
 
-    @PostMapping("signup")
+    @PostMapping("user")
     public ResponseEntity<TotalSignUpResponse> signup(@RequestBody @Valid SignUpRequest request) {
         Long userId = userService.totalSignUp(request);
         return ResponseEntity.ok(new TotalSignUpResponse(userId));
     }
 
-    @PostMapping("login/kakao")
-    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody @Valid KakaoLoginParams params) {
-        KakaoLoginResponse kakaoLoginResponse = userService.kakaoLogin(params);
-        return ResponseEntity.ok(kakaoLoginResponse);
+    @GetMapping("user")
+    public ResponseEntity<UserResponse> getUser(@UserOnly Long userId) {
+        UserResponse user = this.userService.findUser(userId);
+        return ResponseEntity.ok(user);
     }
 
-
-    @PostMapping("login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-        AuthTokens tokens = userService.login(request);
-        return ResponseEntity.ok(new LoginResponse(tokens));
+    @PutMapping("user")
+    public ResponseEntity<UserResponse> updateUser(@UserOnly Long userId, @RequestBody @Valid UpdateUserRequest request) {
+        log.info("{}", request);
+        UserResponse userResponse = this.userService.updateUser(userId, request);
+        return ResponseEntity.ok(userResponse);
     }
 
-//    @PostMapping("logout")
-//    public ResponseEntity<SuccessResponse> logout(@RequestHeader("Authorization") String accessToken) {
-//        if (accessToken.startsWith("Bearer ")) accessToken = accessToken.replace("Bearer ", "");
-//        userService.logout(accessToken);
-//        return ResponseEntity.ok(SuccessResponse.from("success"));
-//    }
-
-    @PostMapping("refresh")
-    public ResponseEntity<TokenRefreshResponse> refresh(
-            @RequestBody @Valid TokenRefreshRequest request
-    ) {
-        TokenRefreshResponse newTokens = userService.refresh(request);
-        return ResponseEntity.ok(newTokens);
+    @DeleteMapping("user")
+    public ResponseEntity<SuccessResponse> deleteUser(@UserOnly Long userId) {
+        this.userService.deleteUser(userId);
+        return ResponseEntity.ok(SuccessResponse.from("success"));
     }
 
-    /**
-     * 인증 테스트 API
-     */
+    @PostMapping("users")
+    public ResponseEntity<SimpleUserResponse> getUsers(@UserOnly Long userId, @RequestBody @Valid SimpleUserRequest request) {
+        List<User> users = this.userService.findUsersById(request);
+        return ResponseEntity.ok(new SimpleUserResponse(users));
+    }
 
     @GetMapping("users")
-    public ResponseEntity<UsersResponse> users(@RequestHeader("Authorization") String accessToken) {
-        if (accessToken.startsWith("Bearer ")) accessToken = accessToken.replace("Bearer ", "");
-        log.info("token : {}", accessToken);
-        List<UserInfoResponse> collect = userService.users(accessToken).stream()
-                .map(UserInfoResponse::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(new UsersResponse(collect));
+    public ResponseEntity<UsersResponse> getUsers(@AdminOnly Long userId, @RequestParam String application) {
+        List<User> users = userRepository.findAllByApplication(application);
+        return ResponseEntity.ok(new UsersResponse(users));
     }
 
-
-    @PostMapping("sms")
-    public ResponseEntity<SuccessResponse> sms(@RequestBody @Valid SmsRequest request) throws Exception {
-        this.smsService.sendVerifyCode(request.getPhone(), request.getApplication());
-        return ResponseEntity.ok(SuccessResponse.from("success"));
-    }
-
-    @PostMapping("sms/verification")
-    public ResponseEntity<SuccessResponse> verifySms(@RequestBody @Valid SmsVerificationRequest request) {
-        this.smsService.verifyCode(request.getPhone(), request.getCode());
-        return ResponseEntity.ok(SuccessResponse.from("success"));
+    @PostMapping("users/name")
+    public ResponseEntity<SimpleUserResponse> getUsers(@UserOnly Long userId, @RequestBody @Valid SearchUserRequest request) {
+        List<User> users = this.userService.findUsersByName(request);
+        return ResponseEntity.ok(new SimpleUserResponse(users));
     }
 
 

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @RedisHash("refresh_token")
 public class UserToken {
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 15;
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 14;
     // Key : refresh_token:{Id}
     // Value : UserToken 객체
     @Id

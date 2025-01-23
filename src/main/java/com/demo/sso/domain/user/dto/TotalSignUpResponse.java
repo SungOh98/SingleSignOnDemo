@@ -10,5 +10,5 @@ public class TotalSignUpResponse {
     @Schema(
             description = "회원가입한 User의 user_id",
             example = "1")
-    private Long userId;
+    private Long id;
 }

@@ -38,12 +38,12 @@ public class UserTokenProvider implements TokenProvider{
     public void validateToken(String token) {
         Long userId = Long.parseLong(this.getSubject(token));
         UserToken userToken = userTokenRepository.findById(userId).orElseThrow(
-                () -> new UserTokenExpiredException("토큰만료")
+                () -> new UserTokenExpiredException("토큰만료") // 401
         );
         if (!Objects.equals(token, userToken.getRefreshToken())) {
             userTokenRepository.deleteById(userId);
             log.warn("{}", "<Refresh 지워버림!!!!!!!!>");
-            throw UnAuthorizationException.withDetail("재로그인");
+            throw UnAuthorizationException.withDetail("재로그인"); // 403
         }
 
 

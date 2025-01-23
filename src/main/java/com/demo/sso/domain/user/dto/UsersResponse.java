@@ -1,12 +1,18 @@
 package com.demo.sso.domain.user.dto;
 
-import lombok.AllArgsConstructor;
+import com.demo.sso.domain.user.domain.User;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class UsersResponse {
-    private List<UserInfoResponse> users;
+    private List<UserResponse> users;
+
+    public UsersResponse(List<User> users) {
+        this.users = users.stream()
+                .filter(User::getIsActive)
+                .map(UserResponse::new)
+                .toList();
+    }
 }

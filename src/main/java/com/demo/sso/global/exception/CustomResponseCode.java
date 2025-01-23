@@ -3,6 +3,7 @@ package com.demo.sso.global.exception;
 
 import lombok.Getter;
 
+
 @Getter
 public enum CustomResponseCode {
     SUCCESS(200),

@@ -1,5 +1,6 @@
 package com.demo.sso.global.auth.jwt;
 
+import com.demo.sso.global.auth.exception.AccessTokenExpiredException;
 import com.demo.sso.global.auth.exception.UnAuthorizationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -67,10 +68,10 @@ public class JwtProvider implements TokenProvider{
                     .parseClaimsJws(token);
         } catch (SignatureException ex) {
 //            log.warn("{}", ex.getMessage(), ex);
-            throw UnAuthorizationException.withDetail("토큰 검증이 실패하였습니다!");
+            throw UnAuthorizationException.withDetail("토큰 검증이 실패하였습니다!"); // 403
         } catch (ExpiredJwtException ex) {
 //            log.warn("{}", ex.getMessage(), ex);
-            throw UnAuthorizationException.withDetail("토큰 유효기간이 만료되었습니다!");
+            throw AccessTokenExpiredException.withDetail("토큰 유효기간이 만료되었습니다!"); // 401
         }
     }
 
@@ -92,9 +93,9 @@ public class JwtProvider implements TokenProvider{
                     .getBody()
                     .getSubject();
         } catch (SignatureException ex) {
-            throw UnAuthorizationException.withDetail("토큰 검증이 실패하였습니다!");
+            throw UnAuthorizationException.withDetail("토큰 검증이 실패하였습니다!"); // 403
         } catch (ExpiredJwtException ex) {
-            throw UnAuthorizationException.withDetail("토큰 유효기간이 만료되었습니다!");
+            throw AccessTokenExpiredException.withDetail("재발급 받아주세요."); // 401
         }
     }
 
